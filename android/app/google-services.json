@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "66041161235",
+    "project_id": "e-school-ee2e7",
+    "storage_bucket": "e-school-ee2e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66041161235:android:b302c82e837c92c905c1e6",
+        "android_client_info": {
+          "package_name": "com.wrteam.eschool"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "66041161235-mr55b28pvplmfk7tdnjf6gv5f7flpvou.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZY8BwZLtCzz86oUxg0y9waf6xZK_O_S4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "66041161235-mr55b28pvplmfk7tdnjf6gv5f7flpvou.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "66041161235-8fq86sndp508ag8cj336gabul2cf1r3h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wrteam.eschool.teacher"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66041161235:android:cdcefea9e190f8ad05c1e6",
+        "android_client_info": {
+          "package_name": "com.wrteam.eschool.teacher"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "66041161235-eua2mlkvht603fieuu5rgrbvlesp7oja.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wrteam.eschool.teacher",
+            "certificate_hash": "0065a82f49dce43db99c5e51ba738f3da7810d2e"
+          }
+        },
+        {
+          "client_id": "66041161235-mr55b28pvplmfk7tdnjf6gv5f7flpvou.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZY8BwZLtCzz86oUxg0y9waf6xZK_O_S4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "66041161235-mr55b28pvplmfk7tdnjf6gv5f7flpvou.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "66041161235-8fq86sndp508ag8cj336gabul2cf1r3h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wrteam.eschool.teacher"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
