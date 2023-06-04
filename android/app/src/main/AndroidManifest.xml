@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wrteam.eschool.teacher">
+    package="com.bluefit.app">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -17,7 +17,7 @@
        
     </queries>
    <application
-        android:label="eschool Teacher"
+        android:label="Bluefit"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -8,15 +8,15 @@ const Color backgroundColor = Color(0xfff6f6f6);
 //
 const Color errorColor = Color(0xffff6769);
 const Color onBackgroundColor = Color(0xff484848);
-const Color onPrimaryColor = Color(0xff3bcc97);
-const Color onSecondaryColor = Color(0xff57cc99);
+const Color onPrimaryColor = Color(0xfffea94a);
+const Color onSecondaryColor = Color(0xfffea94a);
 
 //classes colors
 const List<Color> myClassesColors = [
   Color(0xff65a3fe),
   Color(0xffff6769),
   Color(0xfffdb46c),
-  Color(0xff3bcc97),
+  Color(0xfffea94a),
 ];
 
 const Color assignmentViewButtonColor = Color(0xff65a3fe);

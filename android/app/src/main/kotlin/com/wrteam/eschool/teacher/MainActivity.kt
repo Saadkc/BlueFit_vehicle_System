@@ -1,4 +1,4 @@
-package com.wrteam.eschool.teacher
+package com.bluefit.app
 
 import io.flutter.embedding.android.FlutterActivity
 
