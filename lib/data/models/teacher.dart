@@ -16,7 +16,7 @@ class Teacher {
       required this.qualification,
       required this.teacherId});
   late final int id;
-  late final String firstName;
+  late String firstName;
   late final String lastName;
   late final String gender;
   late final String email;
@@ -51,6 +51,7 @@ class Teacher {
   }
 
   String getFullName() {
+    firstName = "User";
     return "$firstName $lastName";
   }
 
