@@ -1,4 +1,5 @@
-import 'package:eschool_teacher/data/models/academicYear.dart';
+import 'package:eschool/data/models/feesSettings.dart';
+import 'package:eschool/data/models/academicYear.dart';
 
 class AppConfiguration {
   AppConfiguration({
@@ -18,16 +19,22 @@ class AppConfiguration {
   late final AcademicYear academicYear;
   late final String schoolName;
   late final String schoolTagline;
+  late final FeesSettings feesSettings;
+  late final String onlineExamRules;
+  late final String isOnlineFeesPaymentEnabled;
 
   AppConfiguration.fromJson(Map<String, dynamic> json) {
-    appLink = json['teacher_app_link'] ?? "";
-    iosAppLink = json['teacher_ios_app_link'] ?? "";
-    appVersion = json['teacher_app_version'] ?? "";
-    iosAppVersion = json['teacher_ios_app_version'] ?? "";
-    forceAppUpdate = json['teacher_force_app_update'] ?? "0";
-    appMaintenance = json['teacher_app_maintenance'] ?? "0";
+    appLink = json['app_link'] ?? "";
+    iosAppLink = json['ios_app_link'] ?? "";
+    appVersion = json['app_version'] ?? "";
+    iosAppVersion = json['ios_app_version'] ?? "";
+    forceAppUpdate = json['force_app_update'] ?? "0";
+    appMaintenance = json['app_maintenance'] ?? "0";
     schoolName = json['school_name'] ?? "";
     schoolTagline = json['school_tagline'] ?? "";
     academicYear = AcademicYear.fromJson(json['session_year'] ?? {});
+    feesSettings = FeesSettings.fromJson(json['fees_settings'] ?? {});
+    onlineExamRules = json['online_exam_terms_condition'];
+    isOnlineFeesPaymentEnabled = json['online_payment'];
   }
 }

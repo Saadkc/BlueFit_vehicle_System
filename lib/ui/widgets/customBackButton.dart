@@ -1,5 +1,5 @@
-import 'package:eschool_teacher/ui/widgets/svgButton.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/ui/widgets/svgButton.dart';
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/material.dart';
 
 class CustomBackButton extends StatelessWidget {

@@ -1,168 +1,122 @@
-import 'package:eschool_teacher/data/models/studyMaterial.dart';
-import 'package:eschool_teacher/data/models/subject.dart';
+import 'package:eschool/data/models/studyMaterial.dart';
+import 'package:eschool/data/models/subject.dart';
 
 class Assignment {
-  Assignment({
-    required this.id,
-    required this.classSectionId,
-    required this.subjectId,
-    required this.name,
-    required this.instructions,
-    required this.dueDate,
-    required this.points,
-    required this.resubmission,
-    required this.extraDaysForResubmission,
-    required this.sessionYearId,
-    required this.createdAt,
-    required this.classSection,
-    required this.studyMaterial,
-    required this.subject,
-  });
+  Assignment(
+      {required this.id,
+      required this.classSectionId,
+      required this.subjectId,
+      required this.name,
+      required this.instructions,
+      required this.dueDate,
+      required this.points,
+      required this.resubmission,
+      required this.extraDaysForResubmission,
+      required this.sessionYearId,
+      required this.subject,
+      required this.createdAt,
+      required this.assignmentSubmission,
+      required this.referenceMaterials});
+
   late final int id;
   late final int classSectionId;
   late final int subjectId;
   late final String name;
+  late final DateTime createdAt; //It will work as assigned date
+  late List<StudyMaterial> referenceMaterials;
   late final String instructions;
   late final DateTime dueDate;
   late final int points;
   late final int resubmission;
   late final int extraDaysForResubmission;
   late final int sessionYearId;
-  late final String createdAt;
-  late final ClassSection classSection;
-  late final List<StudyMaterial> studyMaterial;
+  late final AssignmentSubmission assignmentSubmission;
   late final Subject subject;
+
+  Assignment updateAssignmentSubmission(
+      AssignmentSubmission newAssignmentSubmission) {
+    return Assignment(
+        createdAt: createdAt,
+        id: id,
+        classSectionId: classSectionId,
+        subjectId: subjectId,
+        name: name,
+        instructions: instructions,
+        dueDate: dueDate,
+        points: points,
+        resubmission: resubmission,
+        extraDaysForResubmission: extraDaysForResubmission,
+        sessionYearId: sessionYearId,
+        subject: subject,
+        assignmentSubmission: newAssignmentSubmission,
+        referenceMaterials: referenceMaterials);
+  }
 
   Assignment.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
     classSectionId = json['class_section_id'] ?? 0;
     subjectId = json['subject_id'] ?? 0;
     name = json['name'] ?? "";
-    instructions = json["instructions"] ?? "";
-    dueDate = DateTime.parse(json['due_date'] ?? "");
-    points = json["points"] ?? 0;
-    resubmission = json['resubmission'] ?? 0;
-    extraDaysForResubmission = json["extra_days_for_resubmission"] ?? 0;
+    instructions = json['instructions'] ?? "";
+    dueDate = json['due_date'] == null
+        ? DateTime.now()
+        : DateTime.parse(json['due_date']);
+    points = json['points'] ?? 0;
+    resubmission = json['resubmission'] ?? -1;
+    extraDaysForResubmission = json['extra_days_for_resubmission'] ?? 0;
     sessionYearId = json['session_year_id'] ?? 0;
-    createdAt = json['created_at'] ?? "";
-    classSection = ClassSection.fromJson(json['class_section'] ?? {});
-    studyMaterial = ((json['file'] ?? {}) as List)
-        .map((e) => StudyMaterial.fromJson(Map.from(e)))
+    referenceMaterials = ((json['file'] ?? []) as List)
+        .map((file) => StudyMaterial.fromJson(Map.from(file)))
         .toList();
-    // file = List.castFrom<dynamic, dynamic>(json['file']);
+    assignmentSubmission =
+        AssignmentSubmission.fromJson(Map.from(json['submission'] ?? {}));
     subject = Subject.fromJson(json['subject'] ?? {});
+    createdAt = json['created_at'] == null
+        ? DateTime.now()
+        : DateTime.parse(json['created_at'].toString());
   }
 }
 
-class ClassSection {
-  ClassSection({
-    required this.id,
-    required this.classId,
-    required this.sectionId,
-    required this.classTeacherId,
-    required this.classs,
-    required this.section,
-  });
+class AssignmentSubmission {
+  AssignmentSubmission(
+      {required this.id,
+      required this.assignmentId,
+      required this.studentId,
+      required this.sessionYearId,
+      required this.feedback,
+      required this.status,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.points,
+      required this.submittedFiles});
   late final int id;
-  late final int classId;
-  late final int sectionId;
-  late final int classTeacherId;
-  late final Classs classs;
-  late final Section section;
+  late final List<StudyMaterial> submittedFiles;
+  late final int assignmentId;
+  late final int studentId;
+  late final int sessionYearId;
+  late final String feedback;
+  late final int status;
+  late final DateTime createdAt;
+  late final int points;
+  late final DateTime updatedAt;
 
-  ClassSection.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    classId = json['class_id'] ?? 0;
-    sectionId = json['section_id'] ?? 0;
-    classTeacherId = json['class_teacher_id'] ?? 0;
-    classs = Classs.fromJson(json['class'] ?? {});
-    section = Section.fromJson(json['section'] ?? {});
-  }
-}
-
-class Classs {
-  Classs({
-    required this.id,
-    required this.name,
-    required this.mediumId,
-  });
-  late final int id;
-  late final String name;
-  late final int mediumId;
-
-  Classs.fromJson(Map<String, dynamic> json) {
+  AssignmentSubmission.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
-    name = json['name'] ?? "";
-    mediumId = json['medium_id'] ?? "";
-  }
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['name'] = name;
-    _data['medium_id'] = mediumId;
-    return _data;
-  }
-}
-
-class Section {
-  Section({
-    required this.id,
-    required this.name,
-  });
-  late final int id;
-  late final String name;
-
-  Section.fromJson(Map<String, dynamic> json) {
-    id = json['id'] ?? 0;
-    name = json['name'] ?? "";
+    points = json['points'] ?? 0;
+    assignmentId = json['assignment_id'] ?? 0;
+    studentId = json['student_id'] ?? 0;
+    sessionYearId = json['session_year_id'] ?? 0;
+    feedback = json['feedback'] ?? "";
+    status = json['status'] ?? -1;
+    createdAt = json['created_at'] == null
+        ? DateTime.now()
+        : DateTime.parse(json['created_at']);
+    updatedAt = json['updated_at'] == null
+        ? DateTime.now()
+        : DateTime.parse(json['updated_at']);
+    submittedFiles = ((json['file'] ?? []) as List)
+        .map((submittedFiles) =>
+            StudyMaterial.fromJson(Map.from(submittedFiles)))
+        .toList();
   }
 }
-
-
-// class StudyMaterial {
-//   StudyMaterial({
-//     required this.id,
-//     required this.modalType,
-//     required this.modalId,
-//     required this.fileName,
-//     required this.fileThumbnail,
-//     required this.type,
-//     required this.fileUrl,
-//     required this.fileExtension,
-//     required this.typeDetail,
-//   });
-//   late final int id;
-//   late final String modalType;
-//   late final int modalId;
-//   late final String fileName;
-//   late final String fileThumbnail;
-//   late final String type;
-//   late final String fileUrl;
-//   late final String fileExtension;
-//   late final String typeDetail;
-
-//   StudyMaterial.fromJson(Map<String, dynamic> json) {
-//     id = json['id'];
-//     modalType = json['modal_type'];
-//     modalId = json['modal_id'];
-//     fileName = json['file_name'];
-//     fileThumbnail = json['file_thumbnail'];
-//     type = json['type'];
-//     fileUrl = json['file_url'];
-//     fileExtension = json['file_extension'];
-//     typeDetail = json['type_detail'];
-//   }
-// }
-
-// {
-//                         "id": 47,
-//                         "modal_type": "App\\Models\\Assignment",
-//                         "modal_id": 38,
-//                         "file_name": "wp4855547.webp",
-//                         "file_thumbnail": "",
-//                         "type": "1",
-//                         "file_url": "https://testschool.wrteam.in/storage/assignment/55v9LeS6NJIOgsV4igmH6Vu6cqcLGvUOxQig0hSn.webp",
-//                         "file_extension": "webp",
-//                         "type_detail": "File Upload"
-//                     },

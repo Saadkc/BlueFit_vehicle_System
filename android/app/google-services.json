@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "773937891294",
-    "project_id": "bluefit-c6cb0",
-    "storage_bucket": "bluefit-c6cb0.appspot.com"
+    "project_number": "115587983506",
+    "project_id": "student-app-47c52",
+    "storage_bucket": "student-app-47c52.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:773937891294:android:96d3342fbeb6f3a276ff4f",
+        "mobilesdk_app_id": "1:115587983506:android:28be2687dd09d59c405e4b",
         "android_client_info": {
-          "package_name": "com.bluefit.app"
+          "package_name": "com.wrteam.eschool"
         }
       },
       "oauth_client": [
         {
-          "client_id": "773937891294-v41hbrm56kgmeujt0029unog29opncnp.apps.googleusercontent.com",
+          "client_id": "115587983506-n6j6ud19cp5no2j2415jkncegl88e75c.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAS1ZiYnBkgWeyqsDDabUZHvqciGh8ZuPM"
+          "current_key": "AIzaSyCRtqbJ4qgU6EVsPNQ2f7RQUHV00Kkqfuo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "773937891294-v41hbrm56kgmeujt0029unog29opncnp.apps.googleusercontent.com",
+              "client_id": "115587983506-n6j6ud19cp5no2j2415jkncegl88e75c.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -1,9 +1,6 @@
-import 'package:eschool_teacher/data/models/exam.dart';
-import 'package:eschool_teacher/data/models/subject.dart';
+import 'package:eschool/data/repositories/studentRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../data/repositories/studentRepository.dart';
-
+import 'package:eschool/data/models/exam.dart';
 abstract class ExamTimeTableState {}
 
 class ExamTimeTableInitial extends ExamTimeTableState {}
@@ -27,53 +24,14 @@ class ExamTimeTableCubit extends Cubit<ExamTimeTableState> {
 
   ExamTimeTableCubit(this._studentRepository) : super(ExamTimeTableInitial());
 
-  void fetchStudentExamTimeTable({required int examID}) {
+  void fetchStudentExamsList(
+      {required bool useParentApi, int? childId, required int examID}) {
     emit(ExamTimeTableFetchInProgress());
     _studentRepository
         .fetchExamTimeTable(
-          examId: examID,
-        )
+            examId: examID, childId: childId ?? 0, useParentApi: useParentApi)
         .then((value) =>
             emit(ExamTimeTableFetchSuccess(examTimeTableList: value)))
         .catchError((e) => emit(ExamTimeTableFetchFailure(e.toString())));
-  }
-
-
-  void updateState(ExamTimeTableState updateState) {
-    emit(updateState);
-  }
-  List<ExamTimeTable> getAllSubjectOfExamTimeTable() {
-    if (state is ExamTimeTableFetchSuccess) {
-      return (state as ExamTimeTableFetchSuccess).examTimeTableList;
-    }
-    return [];
-  }
-
-  List<Subject> getAllSubjects() {
-    var list = List<Subject>.from(
-        getAllSubjectOfExamTimeTable().map((e) => e.subject));
-
-    return list;
-  }
-
-  String getTotalMarksOfSubject({required int subjectId}) {
-    String totalMarks = '';
-    getAllSubjectOfExamTimeTable().forEach((element) {
-      if(element.subject!.id == subjectId){
-        totalMarks= element.totalMarks.toString();
-      }
-    });
-
-    return totalMarks;
-  }
-
-  List<String> getSubjectName() {
-    return getAllSubjects().map((exams) => exams.getSubjectName()).toList();
-  }
-
-  Subject getSubjectDetailsBySubjectName({required String subjectName}) {
-    return getAllSubjects()
-        .where((element) => element.name == subjectName.trim())
-        .first;
   }
 }

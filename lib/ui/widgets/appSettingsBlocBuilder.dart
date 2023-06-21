@@ -1,7 +1,7 @@
-import 'package:eschool_teacher/cubits/appSettingsCubit.dart';
-import 'package:eschool_teacher/ui/widgets/customCircularProgressIndicator.dart';
-import 'package:eschool_teacher/ui/widgets/errorContainer.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/cubits/appSettingsCubit.dart';
+import 'package:eschool/ui/widgets/customCircularProgressIndicator.dart';
+import 'package:eschool/ui/widgets/errorContainer.dart';
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -26,9 +26,7 @@ class AppSettingsBlocBuilder extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Html(
-                    data: state.appSettingsResult,
-                  ),
+                  child: Html(data: state.appSettingsResult),
                 )
               ],
             ),

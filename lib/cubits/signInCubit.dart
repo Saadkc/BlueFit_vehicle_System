@@ -1,24 +1,44 @@
-import 'package:eschool_teacher/data/models/teacher.dart';
-import 'package:eschool_teacher/data/repositories/authRepository.dart';
+import 'package:equatable/equatable.dart';
+import 'package:eschool/data/models/parent.dart';
+import 'package:eschool/data/models/student.dart';
+import 'package:eschool/data/repositories/authRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class SignInState {}
+abstract class SignInState extends Equatable {}
 
-class SignInInitial extends SignInState {}
+class SignInInitial extends SignInState {
+  @override
+  List<Object?> get props => [];
+}
 
-class SignInInProgress extends SignInState {}
+class SignInInProgress extends SignInState {
+  @override
+  List<Object?> get props => [];
+}
 
 class SignInSuccess extends SignInState {
   final String jwtToken;
-  final Teacher teacher;
+  final bool isStudentLogIn;
+  final Student student;
 
-  SignInSuccess({required this.jwtToken, required this.teacher});
+  final Parent parent;
+
+  SignInSuccess(
+      {required this.jwtToken,
+      required this.isStudentLogIn,
+      required this.student,
+      required this.parent});
+  @override
+  List<Object?> get props => [jwtToken, isStudentLogIn, student];
 }
 
 class SignInFailure extends SignInState {
   final String errorMessage;
 
   SignInFailure(this.errorMessage);
+
+  @override
+  List<Object?> get props => [];
 }
 
 class SignInCubit extends Cubit<SignInState> {
@@ -26,19 +46,30 @@ class SignInCubit extends Cubit<SignInState> {
 
   SignInCubit(this._authRepository) : super(SignInInitial());
 
-  void signInUser({required String email, required String password}) async {
+  void signInUser(
+      {required String userId,
+      required String password,
+      required isStudentLogin}) async {
     emit(SignInInProgress());
 
     try {
-      Map<String, dynamic> result =
-          await _authRepository.signInTeacher(email: email, password: password);
+      late Map<String, dynamic> result;
+
+      if (isStudentLogin) {
+        result = await _authRepository.signInStudent(
+            grNumber: userId, password: password);
+      } else {
+        result = await _authRepository.signInParent(
+            email: userId, password: password);
+      }
 
       emit(SignInSuccess(
-        jwtToken: result['jwtToken'],
-        teacher: result['teacher'] as Teacher,
-      ));
+          jwtToken: result['jwtToken'],
+          isStudentLogIn: isStudentLogin,
+          student: isStudentLogin ? result['student'] : Student.fromJson({}),
+          parent: isStudentLogin ? Parent.fromJson({}) : result['parent']));
     } catch (e) {
-      print(e.toString());
+
       emit(SignInFailure(e.toString()));
     }
   }

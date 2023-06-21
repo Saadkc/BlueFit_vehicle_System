@@ -1,57 +1,52 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:eschool_teacher/app/routes.dart';
-import 'package:eschool_teacher/cubits/authCubit.dart';
-import 'package:eschool_teacher/cubits/myClassesCubit.dart';
-import 'package:eschool_teacher/data/models/classSectionDetails.dart';
-import 'package:eschool_teacher/ui/widgets/customShimmerContainer.dart';
-import 'package:eschool_teacher/ui/widgets/errorContainer.dart';
-import 'package:eschool_teacher/ui/widgets/internetListenerWidget.dart';
-import 'package:eschool_teacher/ui/widgets/screenTopBackgroundContainer.dart';
-import 'package:eschool_teacher/ui/widgets/shimmerLoadingContainer.dart';
-import 'package:eschool_teacher/utils/labelKeys.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/app/routes.dart';
+import 'package:eschool/cubits/authCubit.dart';
+import 'package:eschool/cubits/noticeBoardCubit.dart';
+import 'package:eschool/cubits/studentSubjectAndSlidersCubit.dart';
+import 'package:eschool/ui/widgets/borderedProfilePictureContainer.dart';
+import 'package:eschool/ui/widgets/customShimmerContainer.dart';
+import 'package:eschool/ui/widgets/customShowCaseWidget.dart';
+import 'package:eschool/ui/widgets/errorContainer.dart';
+import 'package:eschool/ui/widgets/latestNoticesContainer.dart';
+import 'package:eschool/ui/widgets/screenTopBackgroundContainer.dart';
+import 'package:eschool/ui/widgets/shimmerLoaders/announcementShimmerLoadingContainer.dart';
+import 'package:eschool/ui/widgets/shimmerLoaders/subjectsShimmerLoadingContainer.dart';
+import 'package:eschool/ui/widgets/shimmerLoadingContainer.dart';
+import 'package:eschool/ui/widgets/slidersContainer.dart';
+import 'package:eschool/ui/widgets/studentSubjectsContainer.dart';
+import 'package:eschool/utils/labelKeys.dart';
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 class HomeContainer extends StatefulWidget {
-  HomeContainer({Key? key}) : super(key: key);
+  //Need this flag in order to show the homeContainer
+  //in background when bottom menu is open
+
+  //If it is just for background showing purpose then it will not reactive or not making any api call
+  final bool isForBottomMenuBackground;
+  HomeContainer({Key? key, required this.isForBottomMenuBackground})
+      : super(key: key);
 
   @override
   State<HomeContainer> createState() => _HomeContainerState();
 }
 
 class _HomeContainerState extends State<HomeContainer> {
+  GlobalKey _profilePictureNavigationShowCaseGlobalKey = GlobalKey();
+
   @override
   void initState() {
-    Future.delayed(Duration.zero, () {
-      context.read<MyClassesCubit>().fetchMyClasses();
-    });
     super.initState();
-  }
-
-  TextStyle _titleFontStyle() {
-    return TextStyle(
-        color: Theme.of(context).colorScheme.secondary,
-        fontSize: 17.0,
-        fontWeight: FontWeight.w600);
-  }
-
-  Widget _buildMyClassesLabel() {
-    return Column(
-      children: [
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: Text(
-            UiUtils.getTranslatedLabel(context, myClassesKey),
-            style: _titleFontStyle(),
-          ),
-        ),
-        SizedBox(
-          height: 20.0,
-        ),
-      ],
-    );
+    if (!widget.isForBottomMenuBackground) {
+      Future.delayed(Duration.zero, () {
+        context
+            .read<StudentSubjectsAndSlidersCubit>()
+            .fetchSubjectsAndSliders();
+        context
+            .read<NoticeBoardCubit>()
+            .fetchNoticeBoardDetails(useParentApi: false);
+      });
+    }
   }
 
   Widget _buildTopProfileContainer(BuildContext context) {
@@ -65,7 +60,7 @@ class _HomeContainerState extends State<HomeContainer> {
               top: MediaQuery.of(context).size.width * (-0.15),
               start: MediaQuery.of(context).size.width * (-0.225),
               child: Container(
-                padding: EdgeInsets.only(right: 20.0, bottom: 20.0),
+                padding: EdgeInsetsDirectional.only(end: 20.0, bottom: 20.0),
                 child: Container(
                   decoration: BoxDecoration(
                       border: Border.all(
@@ -108,48 +103,94 @@ class _HomeContainerState extends State<HomeContainer> {
                     bottom: boxConstraints.maxHeight * (0.2)),
                 child: Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: CachedNetworkImageProvider(context
-                                  .read<AuthCubit>()
-                                  .getTeacherDetails()
-                                  .image)),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              width: 2.0,
-                              color:
-                                  Theme.of(context).scaffoldBackgroundColor)),
-                      width: boxConstraints.maxWidth * (0.175),
-                      height: boxConstraints.maxWidth * (0.175),
-                    ),
+                    widget.isForBottomMenuBackground
+                        ? Container()
+                        // BorderedProfilePictureContainer(
+                        //     boxConstraints: boxConstraints,
+                        //     imageUrl: context
+                        //         .read<AuthCubit>()
+                        //         .getStudentDetails()
+                        //         .image)
+                        : 
+                        CustomShowCaseWidget(
+                            shapeBorder: CircleBorder(),
+                            globalKey:
+                                _profilePictureNavigationShowCaseGlobalKey,
+                            description: "Tap to view profile",
+                            child: BorderedProfilePictureContainer(
+                                boxConstraints: boxConstraints,
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                      Routes.studentProfile,
+                                      arguments: context
+                                          .read<AuthCubit>()
+                                          .getStudentDetails());
+                                },
+                                imageUrl: context
+                                    .read<AuthCubit>()
+                                    .getStudentDetails()
+                                    .image),
+                          ),
                     SizedBox(
                       width: boxConstraints.maxWidth * (0.05),
                     ),
                     Expanded(
-                        child: Row(
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              context
-                                  .read<AuthCubit>()
-                                  .getTeacherDetails()
-                                  .getFullName(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Theme.of(context)
-                                      .scaffoldBackgroundColor),
-                            ),
-                          ],
-                        )
-                      ],
-                    ))
+                      child: Row(
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                context
+                                    .read<AuthCubit>()
+                                    .getStudentDetails()
+                                    .getFullName(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "${UiUtils.getTranslatedLabel(context, classKey)}",
+                                    style: TextStyle(
+                                        fontSize: 12.0,
+                                        fontWeight: FontWeight.w400,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor),
+                                  ),
+                                  // SizedBox(
+                                  //   width: 10.0,
+                                  // ),
+                                  // Container(
+                                  //   width: 1.5,
+                                  //   height: 12.0,
+                                  //   color: Theme.of(context)
+                                  //       .scaffoldBackgroundColor,
+                                  // ),
+                                  SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Text(
+                                    "${UiUtils.getTranslatedLabel(context, rollNoKey)}",
+                                    style: TextStyle(
+                                        fontSize: 12.0,
+                                        fontWeight: FontWeight.w400,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -160,402 +201,120 @@ class _HomeContainerState extends State<HomeContainer> {
     );
   }
 
-  Widget _buildClassShimmerLoading(BoxConstraints boxConstraints) {
-    return ShimmerLoadingContainer(
-        child: CustomShimmerContainer(
-      height: 80,
-      borderRadius: 10,
-      width: boxConstraints.maxWidth * (0.45),
-    ));
+  Widget _buildAdvertisemntSliders() {
+    //
+    final sliders = context.read<StudentSubjectsAndSlidersCubit>().getSliders();
+    return SlidersContainer(sliders: sliders);
   }
 
-  Widget _buildClassContainer(
-      {required BoxConstraints boxConstraints,
-      required ClassSectionDetails classSectionDetails,
-      required int index,
-      required bool isClassTeacher}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed(
-            Routes.classScreen,
-            arguments: {
-              "isClassTeacher": isClassTeacher,
-              "classSection": classSectionDetails
+  Widget _buildSlidersSubjectsAndLatestNotcies() {
+    return BlocConsumer<StudentSubjectsAndSlidersCubit,
+        StudentSubjectsAndSlidersState>(
+      listener: (context, state) {
+        if (state is StudentSubjectsAndSlidersFetchSuccess) {
+          if (state.electiveSubjects.isEmpty &&
+              state.doesClassHaveElectiveSubjects) {
+            Navigator.of(context).pushNamed(Routes.selectSubjects);
+          }
+        }
+      },
+      builder: (context, state) {
+        if (state is StudentSubjectsAndSlidersFetchSuccess) {
+          return RefreshIndicator(
+            displacement: UiUtils.getScrollViewTopPadding(
+                context: context,
+                appBarHeightPercentage: UiUtils.appBarBiggerHeightPercentage),
+            color: Theme.of(context).colorScheme.primary,
+            onRefresh: () async {
+              context
+                  .read<StudentSubjectsAndSlidersCubit>()
+                  .fetchSubjectsAndSliders();
             },
-          );
-        },
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          height: 80,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "${classSectionDetails.classDetails.name} - ${classSectionDetails.sectionDetails.name}",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-              Positioned(
-                  bottom: -15,
-                  left: (boxConstraints.maxWidth * 0.225) - 15, //0.45
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: 30,
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 18,
-                    ),
-                    height: 30,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.2),
-                              offset: Offset(0, 4),
-                              blurRadius: 20)
-                        ],
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).scaffoldBackgroundColor),
-                  ))
-            ],
-          ),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              //Diplaying different(4) class color
-              color: UiUtils.getClassColor(index),
-              boxShadow: [
-                BoxShadow(
-                    blurRadius: 10,
-                    color: UiUtils.getClassColor(index).withOpacity(0.2),
-                    offset: Offset(0, 2.5))
-              ]),
-          width: boxConstraints.maxWidth * 0.45,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMyClasses() {
-    final classes = context.read<MyClassesCubit>().classes();
-    return Column(
-      children: [
-        _buildMyClassesLabel(),
-        LayoutBuilder(builder: (context, boxConstraints) {
-          return Wrap(
-            spacing: boxConstraints.maxWidth * (0.1),
-            runSpacing: 40,
-            direction: Axis.horizontal,
-            children: List.generate(classes.length, (index) => index)
-                .map((index) => _buildClassContainer(
-                      boxConstraints: boxConstraints,
-                      classSectionDetails: classes[index],
-                      index: index,
-                      isClassTeacher: false,
-                    ))
-                .toList(),
-          );
-        }),
-      ],
-    );
-  }
-
-  Widget _buildClassTeacherLabel() {
-    return Column(
-      children: [
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: Text(
-            UiUtils.getTranslatedLabel(context, classTeacherKey),
-            style: _titleFontStyle(),
-          ),
-        ),
-        SizedBox(
-          height: 20.0,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildClassTeacher() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildClassTeacherLabel(),
-        LayoutBuilder(builder: (context, boxConstraints) {
-          return _buildClassContainer(
-              classSectionDetails:
-                  context.read<MyClassesCubit>().primaryClass(),
-              boxConstraints: boxConstraints,
-              index: 0,
-              isClassTeacher: true);
-        }),
-      ],
-    );
-  }
-
-  Widget _buildMenuContainer(
-      {required String iconPath,
-      required String title,
-      required String route}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: () {
-          Navigator.of(context).pushNamed(route);
-        },
-        child: Container(
-          height: 80,
-          child: LayoutBuilder(builder: (context, boxConstraints) {
-            return Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(14),
-                  margin: EdgeInsets.symmetric(horizontal: 10.0),
-                  height: 60,
-                  child: SvgPicture.asset(iconPath),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSecondary
-                          .withOpacity(0.225),
-                      borderRadius: BorderRadius.circular(15.0)),
-                  width: boxConstraints.maxWidth * (0.225),
-                ),
-                SizedBox(
-                  width: 10.0,
-                ),
-                Text(
-                  title,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15),
-                ),
-                Spacer(),
-                CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  radius: 17.5,
-                  child: Icon(
-                    Icons.arrow_forward,
-                    size: 22.5,
-                    color: Theme.of(context).scaffoldBackgroundColor,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(
+                  top: UiUtils.getScrollViewTopPadding(
+                      context: context,
+                      appBarHeightPercentage:
+                          UiUtils.appBarBiggerHeightPercentage),
+                  bottom: UiUtils.getScrollViewBottomPadding(context)),
+              child: Column(
+                children: [
+                  _buildAdvertisemntSliders(),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * (0.025),
                   ),
-                ),
-                SizedBox(
-                  width: 15.0,
-                ),
-              ],
-            );
-          }),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                width: 1.0,
-                color:
-                    Theme.of(context).colorScheme.secondary.withOpacity(0.25),
-              )),
-        ),
-      ),
-    );
-  }
+                  StudentSubjectsContainer(
+                    subjects: context
+                        .read<StudentSubjectsAndSlidersCubit>()
+                        .getSubjects(),
+                    subjectsTitleKey: mySubjectsKey,
+                  ),
+                  LatestNoticiesContainer(),
+                ],
+              ),
+            ),
+          );
+        }
 
-  Widget _buildInformationAndMenuLabel() {
-    return Column(
-      children: [
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: Text(
-            UiUtils.getTranslatedLabel(context, informationKey),
-            style: _titleFontStyle(),
-          ),
-        ),
-        SizedBox(
-          height: 20.0,
-        ),
-      ],
-    );
-  }
+        if (state is StudentSubjectsAndSlidersFetchFailure) {
+          return Center(
+            child: ErrorContainer(
+                onTapRetry: () {
+                  context
+                      .read<StudentSubjectsAndSlidersCubit>()
+                      .fetchSubjectsAndSliders();
+                },
+                errorMessageCode: state.errorMessage),
+          );
+        }
 
-  Widget _buildInformationShimmerLoadingContainer() {
-    return Container(
-      margin: EdgeInsets.only(
-        bottom: 15,
-      ),
-      height: 80,
-      child: LayoutBuilder(builder: (context, boxConstraints) {
-        return Row(
+        return ListView(
+          padding: EdgeInsets.only(
+              top: UiUtils.getScrollViewTopPadding(
+                  context: context,
+                  appBarHeightPercentage:
+                      UiUtils.appBarBiggerHeightPercentage)),
           children: [
             ShimmerLoadingContainer(
                 child: CustomShimmerContainer(
-              height: 60,
-              width: boxConstraints.maxWidth * (0.225),
+              margin: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * (0.075)),
+              width: MediaQuery.of(context).size.width,
+              borderRadius: 25,
+              height: MediaQuery.of(context).size.height *
+                  UiUtils.appBarBiggerHeightPercentage,
             )),
             SizedBox(
-              width: boxConstraints.maxWidth * (0.05),
+              height: MediaQuery.of(context).size.height * (0.025),
             ),
-            ShimmerLoadingContainer(
-                child: CustomShimmerContainer(
-              width: boxConstraints.maxWidth * (0.475),
-            )),
-            Spacer(),
-            ShimmerLoadingContainer(
-                child: CustomShimmerContainer(
-              borderRadius: boxConstraints.maxWidth * (0.035),
-              height: boxConstraints.maxWidth * (0.07),
-              width: boxConstraints.maxWidth * (0.07),
-            )),
+            SubjectsShimmerLoadingContainer(),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * (0.025),
+            ),
+            Column(
+              children: List.generate(3, (index) => index)
+                  .map((notice) => AnnouncementShimmerLoadingContainer())
+                  .toList(),
+            )
           ],
         );
-      }),
-    );
-  }
-
-  Widget _buildInformationAndMenu() {
-    return Column(
-      children: [
-        _buildInformationAndMenuLabel(),
-        _buildMenuContainer(
-            route: Routes.assignments,
-            iconPath: UiUtils.getImagePath("assignment_icon.svg"),
-            title: UiUtils.getTranslatedLabel(context, assignmentsKey)),
-        _buildMenuContainer(
-            route: Routes.announcements,
-            iconPath: UiUtils.getImagePath("announcment_icon.svg"),
-            title: UiUtils.getTranslatedLabel(context, announcementsKey)),
-        _buildMenuContainer(
-            route: Routes.lessons,
-            iconPath: UiUtils.getImagePath("lesson.svg"),
-            title: UiUtils.getTranslatedLabel(context, chaptersKey)),
-        _buildMenuContainer(
-            route: Routes.topics,
-            iconPath: UiUtils.getImagePath("topics.svg"),
-            title: UiUtils.getTranslatedLabel(context, topicsKey)),
-        _buildMenuContainer(
-            route: Routes.holidays,
-            iconPath: UiUtils.getImagePath("holiday_icon.svg"),
-            title: UiUtils.getTranslatedLabel(context, holidaysKey)),
-        _buildMenuContainer(
-            route: Routes.exams,
-            iconPath: UiUtils.getImagePath("exam_icon.svg"),
-            title: UiUtils.getTranslatedLabel(context, examsKey)),
-        context.read<MyClassesCubit>().primaryClass().id == '0'
-            ? SizedBox()
-            : _buildMenuContainer(
-                route: Routes.addResultForAllStudents,
-                iconPath: UiUtils.getImagePath("result_icon.svg"),
-                title: UiUtils.getTranslatedLabel(context, addResultKey),
-              ),
-      ],
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return InternetListenerWidget(
-      onInternetConnectionBack: () {
-        if (context.read<MyClassesCubit>().state is MyClassesFetchFailure) {
-          context.read<MyClassesCubit>().fetchMyClasses();
-        }
-      },
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * (0.075),
-                  right: MediaQuery.of(context).size.width * (0.075),
-                  bottom: UiUtils.getScrollViewBottomPadding(context),
-                  top: UiUtils.getScrollViewTopPadding(
-                      context: context,
-                      appBarHeightPercentage:
-                          UiUtils.appBarBiggerHeightPercentage)),
-              child: BlocBuilder<MyClassesCubit, MyClassesState>(
-                builder: (context, state) {
-                  if (state is MyClassesFetchSuccess) {
-                    return Column(
-                      children: [
-                        _buildMyClasses(),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        _buildClassTeacher(),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        _buildInformationAndMenu()
-                      ],
-                    );
-                  }
-                  if (state is MyClassesFetchFailure) {
-                    return Center(
-                      child: ErrorContainer(
-                        errorMessageCode: UiUtils.getErrorMessageFromErrorCode(
-                            context, state.errorMessage),
-                        onTapRetry: () {
-                          context.read<MyClassesCubit>().fetchMyClasses();
-                        },
-                      ),
-                    );
-                  }
-
-                  return LayoutBuilder(builder: (context, boxConstraints) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildMyClassesLabel(),
-                        Wrap(
-                          spacing: boxConstraints.maxWidth * (0.1),
-                          runSpacing: 40,
-                          direction: Axis.horizontal,
-                          children: List.generate(
-                                  UiUtils.defaultShimmerLoadingContentCount,
-                                  (index) => index)
-                              .map((index) =>
-                                  _buildClassShimmerLoading(boxConstraints))
-                              .toList(),
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        _buildClassTeacherLabel(),
-                        _buildClassShimmerLoading(boxConstraints),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        _buildInformationAndMenuLabel(),
-                        ...List.generate(
-                                UiUtils.defaultShimmerLoadingContentCount,
-                                (index) => index)
-                            .map((e) =>
-                                _buildInformationShimmerLoadingContainer())
-                            .toList(),
-                      ],
-                    );
-                  });
-                },
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: _buildTopProfileContainer(context),
-          ),
-        ],
-      ),
+    return Stack(
+      children: [
+        Align(
+          alignment: Alignment.topCenter,
+          child: _buildSlidersSubjectsAndLatestNotcies(),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: _buildTopProfileContainer(context),
+        ),
+      ],
     );
   }
 }

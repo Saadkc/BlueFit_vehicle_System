@@ -1,4 +1,4 @@
-import 'package:eschool_teacher/ui/styles/colors.dart';
+import 'package:eschool/ui/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 

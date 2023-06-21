@@ -1,28 +1,29 @@
-import 'package:eschool_teacher/cubits/examTimeTableCubit.dart';
-import 'package:eschool_teacher/ui/screens/class/widgets/subjectImageContainer.dart';
-import 'package:eschool_teacher/ui/widgets/customShimmerContainer.dart';
-import 'package:eschool_teacher/ui/widgets/errorContainer.dart';
-import 'package:eschool_teacher/ui/widgets/shimmerLoadingContainer.dart';
-import 'package:eschool_teacher/ui/widgets/svgButton.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/cubits/authCubit.dart';
+import 'package:eschool/cubits/examTimeTableCubit.dart';
+import 'package:eschool/data/models/exam.dart';
+import 'package:eschool/data/models/student.dart';
+import 'package:eschool/data/repositories/studentRepository.dart';
+import 'package:eschool/ui/widgets/customShimmerContainer.dart';
+import 'package:eschool/ui/widgets/errorContainer.dart';
+import 'package:eschool/ui/widgets/noDataContainer.dart';
+import 'package:eschool/ui/widgets/screenTopBackgroundContainer.dart';
+import 'package:eschool/ui/widgets/shimmerLoadingContainer.dart';
+import 'package:eschool/ui/widgets/subjectImageContainer.dart';
+import 'package:eschool/ui/widgets/svgButton.dart';
+import 'package:eschool/utils/labelKeys.dart';
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/models/exam.dart';
-import '../../../data/repositories/studentRepository.dart';
-import '../../../utils/labelKeys.dart';
-import '../../widgets/noDataContainer.dart';
-import '../../widgets/screenTopBackgroundContainer.dart';
-
 class ExamTimeTableScreen extends StatefulWidget {
-  final int? studentId;
+  final int? childID;
   final int examID;
   final String examName;
 
   const ExamTimeTableScreen({
     Key? key,
-    this.studentId,
+    this.childID,
     required this.examID,
     required this.examName,
   }) : super(key: key);
@@ -37,7 +38,7 @@ class ExamTimeTableScreen extends StatefulWidget {
         builder: (_) => BlocProvider(
               create: (context) => ExamTimeTableCubit(StudentRepository()),
               child: ExamTimeTableScreen(
-                studentId: examDetails['studentId'],
+                childID: examDetails['childID'],
                 examID: examDetails['examID'],
                 examName: examDetails['examName'],
               ),
@@ -205,9 +206,10 @@ class _ExamTimeTableState extends State<ExamTimeTableScreen> {
   }
 
   void fetchExamTimeTableList() {
-    context.read<ExamTimeTableCubit>().fetchStudentExamTimeTable(
-          examID: widget.examID,
-        );
+    context.read<ExamTimeTableCubit>().fetchStudentExamsList(
+        useParentApi: context.read<AuthCubit>().isParent(),
+        examID: widget.examID,
+        childId: widget.childID);
   }
 
   @override
@@ -220,7 +222,16 @@ class _ExamTimeTableState extends State<ExamTimeTableScreen> {
 
   Widget _buildAppBar(BuildContext context) {
     String studentName = "";
+    if (context.read<AuthCubit>().isParent()) {
+      final Student student = context
+          .read<AuthCubit>()
+          .getParentDetails()
+          .children
+          .where((element) => element.id == widget.childID)
+          .first;
 
+      studentName = "${student.firstName} ${student.lastName}";
+    }
     return ScreenTopBackgroundContainer(
       heightPercentage: UiUtils.appBarMediumtHeightPercentage,
       child: LayoutBuilder(builder: (context, boxConstraints) {

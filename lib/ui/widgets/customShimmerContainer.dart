@@ -1,5 +1,5 @@
-import 'package:eschool_teacher/ui/styles/colors.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/ui/styles/colors.dart';
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/material.dart';
 
 class CustomShimmerContainer extends StatelessWidget {

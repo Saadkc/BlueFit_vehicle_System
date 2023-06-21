@@ -1,23 +1,35 @@
-import 'package:eschool_teacher/data/repositories/systemInfoRepository.dart';
+import 'package:equatable/equatable.dart';
+import 'package:eschool/data/repositories/systemInfoRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 //It will store the details like contact us and other
-abstract class AppSettingsState {}
+abstract class AppSettingsState extends Equatable {}
 
-class AppSettingsInitial extends AppSettingsState {}
+class AppSettingsInitial extends AppSettingsState {
+  @override
+  List<Object?> get props => [];
+}
 
-class AppSettingsFetchInProgress extends AppSettingsState {}
+class AppSettingsFetchInProgress extends AppSettingsState {
+  @override
+  List<Object?> get props => [];
+}
 
 class AppSettingsFetchSuccess extends AppSettingsState {
   final String appSettingsResult;
 
   AppSettingsFetchSuccess({required this.appSettingsResult});
+  @override
+  List<Object?> get props => [appSettingsResult];
 }
 
 class AppSettingsFetchFailure extends AppSettingsState {
   final String errorMessage;
 
   AppSettingsFetchFailure(this.errorMessage);
+
+  @override
+  List<Object?> get props => [errorMessage];
 }
 
 class AppSettingsCubit extends Cubit<AppSettingsState> {

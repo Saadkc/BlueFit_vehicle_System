@@ -29,10 +29,8 @@ class Student {
       required this.isNewAdmission,
       required this.categoryName,
       required this.classSectionName,
-      required this.gender,
       required this.mediumName});
   late final int id;
-  late final String gender;
   late final String email;
   late final String firstName;
   late final String lastName;
@@ -66,16 +64,15 @@ class Student {
   Student.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
 
-    lastName = json['user']['last_name'] ?? "";
-    firstName = json['user']['first_name'] ?? "";
-    gender = json['user']['gender'] ?? "";
-    currentAddress = json['user']['current_address'] ?? "";
-    permanentAddress = json['user']['permanent_address'] ?? "";
+    lastName = json['last_name'] ?? "";
+    firstName = json['first_name'] ?? "";
+    currentAddress = json['current_address'] ?? "";
+    permanentAddress = json['permanent_address'] ?? "";
 
     email = json['email'] ?? "";
     mobile = json['mobile'] ?? "";
-    image = json['user']['image'] ?? "";
-    dob = json['user']['dob'] ?? "";
+    image = json['image'] ?? "";
+    dob = json['dob'] ?? "";
     status = json['status'] ?? 0;
     createdAt = json['created_at'] ?? "";
     updatedAt = json['updated_at'] ?? "";
@@ -94,14 +91,47 @@ class Student {
     motherId = json['mother_id'] ?? 0;
     guardianId = json['guardian_id'] ?? 0;
     isNewAdmission = json['is_new_admission'] ?? 0;
-    final className = json['class_section']['class']['name'] ?? "";
-    final sectionName = json['class_section']['section']['name'] ?? "";
-    classSectionName = "$className - $sectionName";
-    mediumName = json['class_section']['class']['medium']['name'];
+    classSectionName = json['class_section_name'] ?? "";
+    mediumName = json['medium_name'] ?? "";
     categoryName = json['category_name'] ?? "";
   }
 
   String getFullName() {
     return "$firstName $lastName";
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['id'] = id;
+    _data['last_name'] = lastName;
+    _data['first_name'] = firstName;
+    _data['current_address'] = currentAddress;
+    _data['permanent_address'] = permanentAddress;
+    _data['email'] = email;
+    _data['mobile'] = mobile;
+    _data['image'] = image;
+    _data['dob'] = dob;
+    _data['status'] = status;
+    _data['created_at'] = createdAt;
+    _data['updated_at'] = updatedAt;
+    _data['user_id'] = userId;
+    _data['class_section_id'] = classSectionId;
+    _data['category_id'] = categoryId;
+    _data['admission_no'] = admissionNo;
+    _data['roll_number'] = rollNumber;
+    _data['caste'] = caste;
+    _data['religion'] = religion;
+    _data['admission_date'] = admissionDate;
+    _data['blood_group'] = bloodGroup;
+    _data['height'] = height;
+    _data['weight'] = weight;
+    _data['father_id'] = fatherId;
+    _data['mother_id'] = motherId;
+    _data['guardian_id'] = guardianId;
+    _data['is_new_admission'] = isNewAdmission;
+    _data['class_section_name'] = classSectionName;
+    _data['medium_name'] = mediumName;
+    _data['category_name'] = categoryName;
+    return _data;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:eschool_teacher/utils/labelKeys.dart';
+import 'package:eschool/utils/labelKeys.dart';
 
 class ErrorMessageKeysAndCode {
   static const String defaultErrorMessageKey = "defaultErrorMessage";
@@ -15,7 +15,7 @@ class ErrorMessageKeysAndCode {
   static String canNotSendResetPasswordRequestKey =
       "canNotSendResetPasswordRequest";
 
-  static String nameAlreadyTakenKey = "nameAlreadyTaken";
+  static String examOnlineAttendedKey = "examOnlineAttended";
 
   //These are ui side error codes
 
@@ -45,14 +45,12 @@ class ErrorMessageKeysAndCode {
     if (errorCode == "109") {
       return invalidPasswordKey;
     }
-    if (errorCode == "112") {
-      return featureDisableInDemoVersionKey;
+
+    if (errorCode == "105") {
+      return examOnlineAttendedKey;
     }
     if (errorCode == permissionNotGivenCode) {
-      return "permissionsNotGivenKey";
-    }
-    if (errorCode == "113") {
-      return nameAlreadyTakenKey;
+      return permissionsNotGivenKey;
     }
     if (errorCode == noInternetCode) {
       return noInternetKey;

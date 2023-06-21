@@ -1,8 +1,9 @@
-import 'package:eschool_teacher/data/models/teacher.dart';
-import 'package:eschool_teacher/utils/api.dart';
-import 'package:eschool_teacher/utils/hiveBoxKeys.dart';
+import 'package:eschool/data/models/parent.dart';
+import 'package:eschool/data/models/student.dart';
+import 'package:eschool/utils/api.dart';
+import 'package:eschool/utils/hiveBoxKeys.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 
 class AuthRepository {
   //LocalDataSource
@@ -14,13 +15,30 @@ class AuthRepository {
     return Hive.box(authBoxKey).put(isLogInKey, value);
   }
 
-  Teacher getTeacherDetails() {
-    return Teacher.fromJson(
-        Map.from((Hive.box(authBoxKey).get(teacherDetailsKey) ?? {})));
+  bool getIsStudentLogIn() {
+    return Hive.box(authBoxKey).get(isStudentLogInKey) ?? false;
   }
 
-  Future<void> setTeacherDetails(Teacher teacher) async {
-    return Hive.box(authBoxKey).put(teacherDetailsKey, teacher.toJson());
+  Future<void> setIsStudentLogIn(bool value) async {
+    return Hive.box(authBoxKey).put(isStudentLogInKey, value);
+  }
+
+  Student getStudentDetails() {
+    return Student.fromJson(
+        Map.from((Hive.box(authBoxKey).get(studentDetailsKey) ?? {})));
+  }
+
+  Future<void> setStudentDetails(Student student) async {
+    return Hive.box(authBoxKey).put(studentDetailsKey, student.toJson());
+  }
+
+  Parent getParentDetails() {
+    return Parent.fromJson(
+        (Map.from(Hive.box(authBoxKey).get(parentDetailsKey) ?? {})));
+  }
+
+  Future<void> setParentDetails(Parent parent) async {
+    return Hive.box(authBoxKey).put(parentDetailsKey, parent.toJson());
   }
 
   String getJwtToken() {
@@ -37,25 +55,64 @@ class AuthRepository {
     } catch (e) {}
     setIsLogIn(false);
     setJwtToken("");
-    setTeacherDetails(Teacher.fromJson({}));
+    setStudentDetails(Student.fromJson({}));
+    setParentDetails(Parent.fromJson({}));
   }
 
   //RemoteDataSource
-  Future<Map<String, dynamic>> signInTeacher(
-      {required String email, required String password}) async {
+  Future<Map<String, dynamic>> signInStudent(
+      {required String grNumber, required String password}) async {
     try {
       final fcmToken = await FirebaseMessaging.instance.getToken();
-      final body = {"password": password, "email": email, "fcm_id": fcmToken};
+      final body = {
+        "password": password,
+        "gr_number": grNumber,
+        "fcm_id": fcmToken
+      };
 
-      final result =
-          await Api.post(body: body, url: Api.login, useAuthToken: false);
+      final result = await Api.post(
+          body: body, url: Api.studentLogin, useAuthToken: false);
 
       return {
         "jwtToken": result['token'],
-        "teacher": Teacher.fromJson(Map.from(result['data']))
+        "student": Student.fromJson(Map.from(result['data']))
       };
     } catch (e) {
       print(e.toString());
+
+      throw ApiException(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> signInParent(
+      {required String email, required String password}) async {
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      final body = {
+        "password": password,
+        "email": email,
+        "fcm_id": fcmToken,
+      };
+
+      final result =
+          await Api.post(body: body, url: Api.parentLogin, useAuthToken: false);
+
+      return {
+        "jwtToken": result['token'],
+        "parent": Parent.fromJson(Map.from(result['data']))
+      };
+    } catch (e) {
+      throw ApiException(e.toString());
+    }
+  }
+
+  Future<void> resetPasswordRequest(
+      {required String grNumber, required String dob}) async {
+    try {
+      final body = {"gr_no": grNumber, "dob": dob};
+      await Api.post(
+          body: body, url: Api.requestResetPassword, useAuthToken: false);
+    } catch (e) {
       throw ApiException(e.toString());
     }
   }

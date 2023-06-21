@@ -1,19 +1,7 @@
-import 'package:eschool_teacher/app/appLocalization.dart';
-import 'package:eschool_teacher/app/routes.dart';
-import 'package:eschool_teacher/cubits/appConfigurationCubit.dart';
-import 'package:eschool_teacher/cubits/appLocalizationCubit.dart';
-import 'package:eschool_teacher/cubits/authCubit.dart';
-import 'package:eschool_teacher/cubits/internetConnectivityCubit.dart';
-import 'package:eschool_teacher/cubits/myClassesCubit.dart';
-
-import 'package:eschool_teacher/data/repositories/authRepository.dart';
-import 'package:eschool_teacher/data/repositories/settingsRepository.dart';
-import 'package:eschool_teacher/data/repositories/systemInfoRepository.dart';
-import 'package:eschool_teacher/data/repositories/teacherRepository.dart';
-import 'package:eschool_teacher/ui/styles/colors.dart';
-import 'package:eschool_teacher/utils/appLanguages.dart';
-import 'package:eschool_teacher/utils/hiveBoxKeys.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:eschool/cubits/resultsCubit.dart';
+import 'package:eschool/cubits/resultsOnlineCubit.dart';
+import 'package:eschool/data/repositories/resultRepository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +11,43 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:eschool/app/appLocalization.dart';
+import 'package:eschool/app/routes.dart';
+
+import 'package:eschool/cubits/appConfigurationCubit.dart';
+import 'package:eschool/cubits/appLocalizationCubit.dart';
+import 'package:eschool/cubits/authCubit.dart';
+import 'package:eschool/cubits/examDetailsCubit.dart';
+import 'package:eschool/cubits/examsOnlineCubit.dart';
+import 'package:eschool/cubits/feesPaymentCubit.dart';
+import 'package:eschool/cubits/feesReceiptCubit.dart';
+import 'package:eschool/cubits/noticeBoardCubit.dart';
+import 'package:eschool/cubits/notificationSettingsCubit.dart';
+import 'package:eschool/cubits/postFeesPaymentCubit.dart';
+import 'package:eschool/cubits/reportTabSelectionCubit.dart';
+import 'package:eschool/cubits/resultTabSelectionCubit.dart';
+import 'package:eschool/cubits/studentFeesCubit.dart';
+import 'package:eschool/cubits/studentSubjectAndSlidersCubit.dart';
+import 'package:eschool/cubits/examTabSelectionCubit.dart';
+
+import 'package:eschool/data/repositories/announcementRepository.dart';
+import 'package:eschool/data/repositories/authRepository.dart';
+import 'package:eschool/data/repositories/examRepository.dart';
+import 'package:eschool/data/repositories/settingsRepository.dart';
+import 'package:eschool/data/repositories/studentRepository.dart';
+import 'package:eschool/data/repositories/systemInfoRepository.dart';
+
+import 'package:eschool/ui/screens/exam/onlineExam/cubits/examOnlineCubit.dart';
+import 'package:eschool/ui/screens/reports/cubits/onlineExamReportCubit.dart';
+import 'package:eschool/ui/screens/reports/cubits/assignmentReportCubit.dart';
+import 'package:eschool/ui/screens/reports/repositories/reportRepository.dart';
+import 'package:eschool/ui/styles/colors.dart';
+
+import 'package:eschool/utils/appLanguages.dart';
+import 'package:eschool/utils/hiveBoxKeys.dart';
+import 'package:eschool/utils/notificationUtility.dart';
+import 'package:eschool/utils/uiUtils.dart';
+
 Future<void> initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -31,16 +56,25 @@ Future<void> initializeApp() async {
     final license = await rootBundle.loadString('google_fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['google_fonts'], license);
   });
+
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark));
+      statusBarBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.light));
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   await Firebase.initializeApp();
+
+  await NotificationUtility.initializeAwesomeNotification();
+
   await Hive.initFlutter();
+  await Hive.openBox(showCaseBoxKey);
   await Hive.openBox(authBoxKey);
+
   await Hive.openBox(settingsBoxKey);
+  await Hive.openBox(studentSubjectsBoxKey);
+
   runApp(MyApp());
 }
 
@@ -51,8 +85,27 @@ class GlobalScrollBehavior extends ScrollBehavior {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    AwesomeNotifications().setListeners(
+        onActionReceivedMethod: NotificationUtility.onActionReceivedMethod,
+        onNotificationCreatedMethod:
+            NotificationUtility.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod:
+            NotificationUtility.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod:
+            NotificationUtility.onDismissActionReceivedMethod);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,20 +117,62 @@ class MyApp extends StatelessWidget {
         AssetImage(UiUtils.getImagePath("lower_pattern.png")), context);
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AppConfigurationCubit>(
-            create: (_) => AppConfigurationCubit(SystemRepository())),
         BlocProvider<AppLocalizationCubit>(
             create: (_) => AppLocalizationCubit(SettingsRepository())),
+        BlocProvider<NotificationSettingsCubit>(
+            create: (_) => NotificationSettingsCubit(SettingsRepository())),
         BlocProvider<AuthCubit>(create: (_) => AuthCubit(AuthRepository())),
-        BlocProvider<MyClassesCubit>(
-            create: (_) => MyClassesCubit(TeacherRepository())),
-        BlocProvider<InternetConnectivityCubit>(
-            create: (_) => InternetConnectivityCubit()),
+        BlocProvider<StudentSubjectsAndSlidersCubit>(
+            create: (_) => StudentSubjectsAndSlidersCubit(
+                studentRepository: StudentRepository(),
+                systemRepository: SystemRepository())),
+        BlocProvider<NoticeBoardCubit>(
+          create: (context) => NoticeBoardCubit(AnnouncementRepository()),
+        ),
+        BlocProvider<AppConfigurationCubit>(
+          create: (context) => AppConfigurationCubit(SystemRepository()),
+        ),
+        BlocProvider<ExamDetailsCubit>(
+          create: (context) => ExamDetailsCubit(StudentRepository()),
+        ),
+
+        //
+        BlocProvider<StudentFeesCubit>(
+          create: (context) => StudentFeesCubit(StudentRepository()),
+        ),
+        BlocProvider<FeesPaymentCubit>(
+            create: (context) => FeesPaymentCubit(StudentRepository())),
+        BlocProvider<PostFeesPaymentCubit>(
+            create: (context) => PostFeesPaymentCubit(StudentRepository())),
+        BlocProvider<FeesReceiptCubit>(
+            create: (context) => FeesReceiptCubit(StudentRepository())),
+
+        BlocProvider<ResultTabSelectionCubit>(
+            create: (_) => ResultTabSelectionCubit()),
+        BlocProvider<ReportTabSelectionCubit>(
+            create: (_) => ReportTabSelectionCubit()),
+
+        BlocProvider<OnlineExamReportCubit>(
+            create: (_) => OnlineExamReportCubit(ReportRepository())),
+        BlocProvider<AssignmentReportCubit>(
+            create: (_) => AssignmentReportCubit(ReportRepository())),
+
+        BlocProvider<ExamTabSelectionCubit>(
+            create: (_) => ExamTabSelectionCubit()),
+        BlocProvider<ExamOnlineCubit>(
+            create: (_) => ExamOnlineCubit(ExamOnlineRepository())),
+        BlocProvider<ExamsOnlineCubit>(
+            create: (_) => ExamsOnlineCubit(ExamOnlineRepository())),
+
+        BlocProvider<ResultsOnlineCubit>(
+            create: (_) => ResultsOnlineCubit(ResultOnlineRepository())),
       ],
       child: Builder(builder: (context) {
         final currentLanguage =
             context.watch<AppLocalizationCubit>().state.language;
+
         return MaterialApp(
+          navigatorKey: UiUtils.rootNavigatorKey,
           theme: Theme.of(context).copyWith(
               textTheme:
                   GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
@@ -102,8 +197,8 @@ class MyApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: appLanguages.map((language) {
-            return UiUtils.getLocaleFromLanguageCode(language.languageCode);
+          supportedLocales: appLanguages.map((appLanguage) {
+            return UiUtils.getLocaleFromLanguageCode(appLanguage.languageCode);
           }).toList(),
           debugShowCheckedModeBanner: false,
           initialRoute: Routes.splash,

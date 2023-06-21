@@ -1,6 +1,5 @@
-import 'package:eschool_teacher/data/repositories/settingsRepository.dart';
-
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/data/repositories/settingsRepository.dart';
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

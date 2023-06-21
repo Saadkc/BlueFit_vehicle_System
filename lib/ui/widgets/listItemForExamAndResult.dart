@@ -1,5 +1,5 @@
-import 'package:eschool_teacher/utils/labelKeys.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/utils/labelKeys.dart';
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/material.dart';
 
 class ListItemForExamAndResult extends StatelessWidget {
@@ -11,11 +11,11 @@ class ListItemForExamAndResult extends StatelessWidget {
 
   ListItemForExamAndResult(
       {Key? key,
-        required this.examStartingDate,
-        required this.examName,
-        required this.resultGrade,
-        required this.resultPercentage,
-        required this.onItemTap})
+      required this.examStartingDate,
+      required this.examName,
+      required this.resultGrade,
+      required this.resultPercentage,
+      required this.onItemTap})
       : super(key: key);
 
   Widget _buildDetailsBackgroundContainer(
@@ -27,7 +27,7 @@ class ListItemForExamAndResult extends StatelessWidget {
         child: child,
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
+            color: UiUtils.getColorScheme(context).background,
             borderRadius: BorderRadius.circular(10.0)),
       ),
     );
@@ -35,7 +35,7 @@ class ListItemForExamAndResult extends StatelessWidget {
 
   TextStyle _getExamDetailsLabelTextStyle({required BuildContext context}) {
     return TextStyle(
-        color: Theme.of(context).colorScheme.onBackground,
+        color: UiUtils.getColorScheme(context).onBackground,
         fontSize: 12,
         fontWeight: FontWeight.w400);
   }
@@ -61,10 +61,9 @@ class ListItemForExamAndResult extends StatelessWidget {
     );
   }
 
-  TextStyle _getExamNameValueTextStyle(
-      {required BuildContext context}) {
+  TextStyle _getExamNameValueTextStyle({required BuildContext context}) {
     return TextStyle(
-        color: Theme.of(context).colorScheme.secondary,
+        color: UiUtils.getColorScheme(context).secondary,
         fontSize: 14,
         fontWeight: FontWeight.w600);
   }
@@ -110,16 +109,20 @@ class ListItemForExamAndResult extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text("${UiUtils.getTranslatedLabel(context, gradeKey)} - ",
-                  style: _getExamNameValueTextStyle(context: context),),
+                Text(
+                  "${UiUtils.getTranslatedLabel(context, gradeKey)} - ",
+                  style: _getExamNameValueTextStyle(context: context),
+                ),
                 Text('${resultGrade}'),
               ],
             ),
             Spacer(),
             Row(
               children: [
-                Text( "${UiUtils.getTranslatedLabel(context, percentageKey)} : ",
-                  style: _getExamNameValueTextStyle(context: context),),
+                Text(
+                  "${UiUtils.getTranslatedLabel(context, percentageKey)} : ",
+                  style: _getExamNameValueTextStyle(context: context),
+                ),
                 Text('${resultPercentage.toStringAsFixed(2)}%'),
               ],
             ),

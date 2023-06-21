@@ -1,7 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
-import 'package:eschool_teacher/data/models/studyMaterial.dart';
-import 'package:eschool_teacher/ui/widgets/downloadFileButton.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/data/models/studyMaterial.dart';
+import 'package:eschool/ui/widgets/downloadFileButton.dart';
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/material.dart';
 
 class StudyMaterialWithDownloadButtonContainer extends StatelessWidget {

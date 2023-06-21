@@ -1,9 +1,8 @@
-import 'package:eschool_teacher/cubits/appSettingsCubit.dart';
-import 'package:eschool_teacher/data/repositories/systemInfoRepository.dart';
-import 'package:eschool_teacher/ui/widgets/appSettingsBlocBuilder.dart';
-import 'package:eschool_teacher/ui/widgets/customAppbar.dart';
-import 'package:eschool_teacher/utils/labelKeys.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/cubits/appSettingsCubit.dart';
+import 'package:eschool/data/repositories/systemInfoRepository.dart';
+import 'package:eschool/ui/widgets/appSettingsBlocBuilder.dart';
+import 'package:eschool/ui/widgets/customAppbar.dart';
+import 'package:eschool/utils/labelKeys.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,8 +38,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       body: Stack(
         children: [
           AppSettingsBlocBuilder(appSettingsType: contactUsType),
-          CustomAppBar(
-              title: UiUtils.getTranslatedLabel(context, contactUsKey)),
+          CustomAppBar(title: contactUsKey),
         ],
       ),
     );

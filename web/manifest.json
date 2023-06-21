@@ -1,6 +1,6 @@
 {
-    "name": "eschool_teacher",
-    "short_name": "eschool_teacher",
+    "name": "eschool",
+    "short_name": "eschool",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

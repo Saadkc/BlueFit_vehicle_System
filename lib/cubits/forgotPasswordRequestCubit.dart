@@ -1,18 +1,31 @@
-import 'package:eschool_teacher/data/repositories/authRepository.dart';
+import 'package:equatable/equatable.dart';
+import 'package:eschool/data/repositories/authRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class ForgotPasswordRequestState {}
+abstract class ForgotPasswordRequestState extends Equatable {}
 
-class ForgotPasswordRequestInitial extends ForgotPasswordRequestState {}
+class ForgotPasswordRequestInitial extends ForgotPasswordRequestState {
+  @override
+  List<Object?> get props => [];
+}
 
-class ForgotPasswordRequestInProgress extends ForgotPasswordRequestState {}
+class ForgotPasswordRequestInProgress extends ForgotPasswordRequestState {
+  @override
+  List<Object?> get props => [];
+}
 
-class ForgotPasswordRequestSuccess extends ForgotPasswordRequestState {}
+class ForgotPasswordRequestSuccess extends ForgotPasswordRequestState {
+  @override
+  List<Object?> get props => [];
+}
 
 class ForgotPasswordRequestFailure extends ForgotPasswordRequestState {
   final String errorMessage;
 
   ForgotPasswordRequestFailure(this.errorMessage);
+
+  @override
+  List<Object?> get props => [];
 }
 
 class ForgotPasswordRequestCubit extends Cubit<ForgotPasswordRequestState> {

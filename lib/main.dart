@@ -1,6 +1,7 @@
-import 'package:eschool_teacher/app/app.dart';
+import 'package:eschool/app/app.dart';
 
-//v-1.0.1
-void main() {
-  initializeApp();
+///v-1.0.5
+
+Future<void> main() async {
+  await initializeApp();
 }

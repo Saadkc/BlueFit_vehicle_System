@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>66041161235-8fq86sndp508ag8cj336gabul2cf1r3h.apps.googleusercontent.com</string>
+	<string>66041161235-g42vbercqfuqakl6u5r46jutb21qdbpa.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.66041161235-8fq86sndp508ag8cj336gabul2cf1r3h</string>
+	<string>com.googleusercontent.apps.66041161235-g42vbercqfuqakl6u5r46jutb21qdbpa</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>66041161235-482md20go6ptaa523s4clbvq7k3ia2p4.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.wrteam.eschool.teacher</string>
+	<string>com.wrteam.eschool</string>
 	<key>PROJECT_ID</key>
 	<string>e-school-ee2e7</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:66041161235:ios:8dd1acd1f2381b0905c1e6</string>
+	<string>1:66041161235:ios:0c7a0e05f21c292e05c1e6</string>
 </dict>
 </plist>

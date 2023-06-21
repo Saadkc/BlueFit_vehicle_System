@@ -1,4 +1,4 @@
-# eschool_teacher
+# eschool
 
 A new Flutter project.
 

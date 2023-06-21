@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class TabBackgroundContainer extends StatelessWidget {
+class TabBarBackgroundContainer extends StatelessWidget {
   final BoxConstraints boxConstraints;
-  const TabBackgroundContainer({Key? key, required this.boxConstraints})
+  const TabBarBackgroundContainer({Key? key, required this.boxConstraints})
       : super(key: key);
 
   @override
@@ -20,7 +20,7 @@ class TabBackgroundContainer extends StatelessWidget {
       margin: EdgeInsets.only(
           left: boxConstraints.maxWidth * (0.1),
           right: boxConstraints.maxWidth * (0.1),
-          top: boxConstraints.maxHeight * (0.3)),
+          top: boxConstraints.maxHeight * (0.125)),
       height: boxConstraints.maxHeight * (0.325),
       width: boxConstraints.maxWidth * (0.375),
     );

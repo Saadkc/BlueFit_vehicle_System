@@ -1,22 +1,19 @@
-import 'package:eschool_teacher/ui/widgets/customBackButton.dart';
-import 'package:eschool_teacher/ui/widgets/screenTopBackgroundContainer.dart';
-
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/ui/widgets/screenTopBackgroundContainer.dart';
+import 'package:eschool/ui/widgets/svgButton.dart';
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String title;
   final Function? onPressBackButton;
   final String? subTitle;
-  final Widget? trailingWidget;
   final bool? showBackButton;
   CustomAppBar(
       {Key? key,
       this.onPressBackButton,
-      this.showBackButton,
       required this.title,
       this.subTitle,
-      this.trailingWidget})
+      this.showBackButton})
       : super(key: key);
 
   @override
@@ -27,19 +24,23 @@ class CustomAppBar extends StatelessWidget {
         return Stack(
           children: [
             (showBackButton ?? true)
-                ? CustomBackButton(
-                    onTap: onPressBackButton,
-                    alignmentDirectional: AlignmentDirectional.centerStart,
+                ? Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Padding(
+                        child: SvgButton(
+                            onTap: () {
+                              if (onPressBackButton != null) {
+                                onPressBackButton!.call();
+                              } else {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            svgIconUrl: UiUtils.getBackButtonPath(context)),
+                        padding: EdgeInsetsDirectional.only(
+                          start: UiUtils.screenContentHorizontalPadding,
+                        )),
                   )
                 : SizedBox(),
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: Padding(
-                  child: trailingWidget,
-                  padding: EdgeInsetsDirectional.only(
-                    end: UiUtils.screenContentHorizontalPadding,
-                  )),
-            ),
             Align(
               alignment: Alignment.center,
               child: Container(
@@ -58,16 +59,12 @@ class CustomAppBar extends StatelessWidget {
             ),
             Align(
               alignment: Alignment.center,
-              child: Container(
-                alignment: Alignment.center,
-                width: boxConstraints.maxWidth * (0.6),
-                margin: EdgeInsets.only(
-                    top: boxConstraints.maxHeight * (0.25) +
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: boxConstraints.maxHeight * (0.28) +
                         UiUtils.screenTitleFontSize),
                 child: Text(
                   subTitle ?? "",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                       fontSize: UiUtils.screenSubTitleFontSize,
                       color: Theme.of(context).scaffoldBackgroundColor),

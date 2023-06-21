@@ -1,7 +1,7 @@
-import 'package:eschool_teacher/ui/widgets/customRoundedButton.dart';
-import 'package:eschool_teacher/utils/errorMessageKeysAndCodes.dart';
-import 'package:eschool_teacher/utils/labelKeys.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
+import 'package:eschool/ui/widgets/customRoundedButton.dart';
+import 'package:eschool/utils/errorMessageKeysAndCodes.dart';
+import 'package:eschool/utils/labelKeys.dart';
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 

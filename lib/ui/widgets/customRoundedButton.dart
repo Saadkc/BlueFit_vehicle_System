@@ -14,21 +14,20 @@ class CustomRoundedButton extends StatelessWidget {
   final double? textSize;
   final FontWeight? fontWeight;
   final double? elevation;
-  final int? maxLines;
   final Widget? child;
 
+  //if child pass then button title will be ignored
   const CustomRoundedButton({
     Key? key,
     required this.widthPercentage,
     required this.backgroundColor,
-    this.child,
-    this.maxLines,
     this.borderColor,
     this.elevation,
     required this.buttonTitle,
     this.onTap,
     this.radius,
     this.shadowColor,
+    this.child,
     required this.showBorder,
     this.height,
     this.titleColor,
@@ -63,10 +62,10 @@ class CustomRoundedButton extends StatelessWidget {
           child: child ??
               Text(
                 "$buttonTitle",
-                maxLines: maxLines ?? 2,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    fontSize: textSize ?? 17.0,
+                    fontSize: textSize ?? 18.0,
                     color:
                         titleColor ?? Theme.of(context).scaffoldBackgroundColor,
                     fontWeight: fontWeight ?? FontWeight.normal),

@@ -1,18 +1,31 @@
-import 'package:eschool_teacher/data/repositories/authRepository.dart';
+import 'package:equatable/equatable.dart';
+import 'package:eschool/data/repositories/authRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class ChangePasswordState {}
+abstract class ChangePasswordState extends Equatable {}
 
-class ChangePasswordInitial extends ChangePasswordState {}
+class ChangePasswordInitial extends ChangePasswordState {
+  @override
+  List<Object?> get props => [];
+}
 
-class ChangePasswordInProgress extends ChangePasswordState {}
+class ChangePasswordInProgress extends ChangePasswordState {
+  @override
+  List<Object?> get props => [];
+}
 
-class ChangePasswordSuccess extends ChangePasswordState {}
+class ChangePasswordSuccess extends ChangePasswordState {
+  @override
+  List<Object?> get props => [];
+}
 
 class ChangePasswordFailure extends ChangePasswordState {
   final String errorMessage;
 
   ChangePasswordFailure(this.errorMessage);
+
+  @override
+  List<Object?> get props => [];
 }
 
 class ChangePasswordCubit extends Cubit<ChangePasswordState> {

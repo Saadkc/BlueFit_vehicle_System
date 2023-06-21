@@ -1,4 +1,4 @@
-import 'package:eschool_teacher/data/models/studyMaterial.dart';
+import 'package:eschool/data/models/studyMaterial.dart';
 
 class Topic {
   Topic(

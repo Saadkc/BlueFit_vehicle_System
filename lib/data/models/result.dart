@@ -1,19 +1,18 @@
-
-import 'package:eschool_teacher/data/models/subjectMark.dart';
+import 'package:eschool/data/models/subjectMark.dart';
 
 class Result {
   Result(
       {required this.resultId,
-        required this.examId,
-        required this.examName,
-        required this.description,
-        required this.examDate,
-        required this.sessionYear,
-        required this.grade,
-        required this.obtainedMark,
-        required this.percentage,
-        required this.subjectMarks,
-        required this.totalMark});
+      required this.examId,
+      required this.examName,
+      required this.description,
+      required this.examDate,
+      required this.sessionYear,
+      required this.grade,
+      required this.obtainedMark,
+      required this.percentage,
+      required this.subjectMarks,
+      required this.totalMark});
 
   late final int resultId;
   late final int examId;

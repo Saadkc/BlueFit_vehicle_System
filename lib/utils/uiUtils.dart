@@ -1,18 +1,23 @@
-import 'package:eschool_teacher/app/appLocalization.dart';
-import 'package:eschool_teacher/cubits/downloadfileCubit.dart';
-import 'package:eschool_teacher/data/models/studyMaterial.dart';
-import 'package:eschool_teacher/data/repositories/studyMaterialRepositoy.dart';
-import 'package:eschool_teacher/ui/styles/colors.dart';
-import 'package:eschool_teacher/ui/widgets/downloadFileBottomsheetContainer.dart';
-import 'package:eschool_teacher/ui/widgets/bottomToastOverlayContainer.dart';
-import 'package:eschool_teacher/utils/constants.dart';
-import 'package:eschool_teacher/utils/errorMessageKeysAndCodes.dart';
-import 'package:eschool_teacher/utils/labelKeys.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:eschool/app/appLocalization.dart';
+
 import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:eschool/cubits/appConfigurationCubit.dart';
+import 'package:eschool/cubits/downloadFileCubit.dart';
+
+import 'package:eschool/data/models/studyMaterial.dart';
+import 'package:eschool/data/repositories/subjectRepository.dart';
+
+import 'package:eschool/ui/widgets/downloadFileBottomsheetContainer.dart';
+import 'package:eschool/ui/widgets/errorMessageOverlayContainer.dart';
+
+import 'package:eschool/utils/constants.dart';
+import 'package:eschool/utils/errorMessageKeysAndCodes.dart';
+import 'package:eschool/utils/labelKeys.dart';
 
 class UiUtils {
   //This extra padding will add to MediaQuery.of(context).padding.top in orderto give same top padding in every screen
@@ -20,39 +25,48 @@ class UiUtils {
   static double screenContentTopPadding = 15.0;
   static double screenContentHorizontalPadding = 25.0;
   static double screenTitleFontSize = 18.0;
+  static double screenContentHorizontalPaddingInPercentage = 0.075;
+
   static double screenSubTitleFontSize = 14.0;
-  static double textFieldFontSize = 15.0;
-
-  static double screenContentHorizontalPaddingPercentage = 0.075;
-
-  //
-
-  static double bottomSheetButtonHeight = 45.0;
-  static double bottomSheetButtonWidthPercentage = 0.625;
-
   static double extraScreenContentTopPaddingForScrolling = 0.0275;
-  static double appBarSmallerHeightPercentage = 0.15;
+  static double appBarSmallerHeightPercentage = 0.175;
 
-  static double appBarMediumtHeightPercentage = 0.175;
+  static double appBarMediumtHeightPercentage = 0.2;
 
-  static double appBarBiggerHeightPercentage = 0.225;
-
-  static double bottomNavigationHeightPercentage = 0.075;
+  static double bottomNavigationHeightPercentage = 0.08;
   static double bottomNavigationBottomMargin = 25;
 
-  static double bottomSheetHorizontalContentPadding = 20;
-
+  static double appBarBiggerHeightPercentage = 0.25;
+  static double appBarContentTopPadding = 25.0;
+  static double bottomSheetTopRadius = 20.0;
   static double subjectFirstLetterFontSize = 20;
+
+  static double defaultProfilePictureHeightAndWidthPercentage = 0.175;
+
+  static double questionContainerHeightPercentage = 0.725;
+
+  static Duration tabBackgroundContainerAnimationDuration =
+      Duration(milliseconds: 300);
+
+  static Duration showCaseDisplayDelayInDuration = Duration(milliseconds: 350);
+  static Curve tabBackgroundContainerAnimationCurve = Curves.easeInOut;
 
   static double shimmerLoadingContainerDefaultHeight = 7;
 
-  static int defaultShimmerLoadingContentCount = 4;
+  static int defaultShimmerLoadingContentCount = 6;
 
-  static double appBarContentTopPadding = 25.0;
-  static double bottomSheetTopRadius = 20.0;
-  static Duration tabBackgroundContainerAnimationDuration =
-      Duration(milliseconds: 300);
-  static Curve tabBackgroundContainerAnimationCurve = Curves.easeInOut;
+  static GlobalKey<NavigatorState> rootNavigatorKey =
+      GlobalKey<NavigatorState>();
+
+  static final List<String> weekDays = [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ];
 
   //to give bottom scroll padding in screen where
   //bottom navigation bar is displayed
@@ -60,6 +74,35 @@ class UiUtils {
     return MediaQuery.of(context).size.height *
             (UiUtils.bottomNavigationHeightPercentage) +
         UiUtils.bottomNavigationBottomMargin * (1.5);
+  }
+
+  //to give top scroll padding to screen content
+  //
+  static double getScrollViewTopPadding(
+      {required BuildContext context, required double appBarHeightPercentage}) {
+    return MediaQuery.of(context).size.height *
+        (appBarHeightPercentage + extraScreenContentTopPaddingForScrolling);
+  }
+
+  static String getImagePath(String imageName) {
+    return "assets/images/$imageName";
+  }
+
+  static ColorScheme getColorScheme(BuildContext context) {
+    return Theme.of(context).colorScheme;
+  }
+
+  static Locale getLocaleFromLanguageCode(String languageCode) {
+    List<String> result = languageCode.split("-");
+    return result.length == 1
+        ? Locale(result.first)
+        : Locale(result.first, result.last);
+  }
+
+  static String getTranslatedLabel(BuildContext context, String labelKey) {
+    return (AppLocalization.of(context)!.getTranslatedValues(labelKey) ??
+            labelKey)
+        .trim();
   }
 
   static Future<dynamic> showBottomSheet(
@@ -79,65 +122,19 @@ class UiUtils {
     return result;
   }
 
-  static Future<void> showBottomToastOverlay(
-      {required BuildContext context,
-      required String errorMessage,
-      required Color backgroundColor}) async {
-    OverlayState? overlayState = Overlay.of(context);
-    OverlayEntry overlayEntry = OverlayEntry(
-      builder: (context) => BottomToastOverlayContainer(
-        backgroundColor: backgroundColor,
-        errorMessage: errorMessage,
-      ),
-    );
+  static bool isToadyIsInAcademicYear(DateTime firstDate, DateTime lastDate) {
+    final currentDate = DateTime.now();
 
-    overlayState.insert(overlayEntry);
-    await Future.delayed(errorMessageDisplayDuration);
-    overlayEntry.remove();
+    return (currentDate.isAfter(firstDate) && currentDate.isBefore(lastDate)) ||
+        isSameDay(firstDate) ||
+        isSameDay(lastDate);
   }
 
-  static String getErrorMessageFromErrorCode(
-      BuildContext context, String errorCode) {
-    return UiUtils.getTranslatedLabel(
-        context, ErrorMessageKeysAndCode.getErrorMessageKeyFromCode(errorCode));
-  }
-
-  //to give top scroll padding to screen content
-  //
-  static double getScrollViewTopPadding(
-      {required BuildContext context, required double appBarHeightPercentage}) {
-    return MediaQuery.of(context).size.height *
-        (appBarHeightPercentage + extraScreenContentTopPaddingForScrolling);
-  }
-
-  static String getImagePath(String imageName) {
-    return "assets/images/$imageName";
-  }
-
-  static String getLottieAnimationPath(String animationName) {
-    return "assets/animations/$animationName";
-  }
-
-  static ColorScheme getColorScheme(BuildContext context) {
-    return Theme.of(context).colorScheme;
-  }
-
-  static Color getColorFromHexValue(String hexValue) {
-    int color = int.parse(hexValue.replaceAll("#", "0xff").toString());
-    return Color(color);
-  }
-
-  static Locale getLocaleFromLanguageCode(String languageCode) {
-    List<String> result = languageCode.split("-");
-    return result.length == 1
-        ? Locale(result.first)
-        : Locale(result.first, result.last);
-  }
-
-  static String getTranslatedLabel(BuildContext context, String labelKey) {
-    return (AppLocalization.of(context)!.getTranslatedValues(labelKey) ??
-            labelKey)
-        .trim();
+  static bool isSameDay(DateTime dateTime) {
+    final currentDate = DateTime.now();
+    return (currentDate.day == dateTime.day) &&
+        (currentDate.month == dateTime.month) &&
+        (currentDate.year == dateTime.year);
   }
 
   static String getMonthName(int monthNumber) {
@@ -158,6 +155,24 @@ class UiUtils {
     return months[monthNumber - 1];
   }
 
+  static int getMonthNumber(String monthName) {
+    List<String> months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    return (months.indexWhere((element) => element == monthName)) + 1;
+  }
+
   static List<String> buildMonthYearsBetweenTwoDates(
       DateTime startDate, DateTime endDate) {
     List<String> dateTimes = [];
@@ -171,53 +186,67 @@ class UiUtils {
     return dateTimes;
   }
 
-  static Color getClassColor(int index) {
-    int colorIndex = index < myClassesColors.length
-        ? index
-        : (index % myClassesColors.length);
-
-    return myClassesColors[colorIndex];
+  static String formatTime(String time) {
+    final hourMinuteSecond = time.split(":");
+    final hour = int.parse(hourMinuteSecond.first) < 13
+        ? int.parse(hourMinuteSecond.first)
+        : int.parse(hourMinuteSecond.first) - 12;
+    final amOrPm = int.parse(hourMinuteSecond.first) > 12 ? "PM" : "AM";
+    return "${hour.toString().padLeft(2, '0')}:${hourMinuteSecond[1]} $amOrPm";
   }
 
-  static void showFeatureDisableInDemoVersion(BuildContext context) {
-    showBottomToastOverlay(
-        context: context,
-        errorMessage:
-            UiUtils.getTranslatedLabel(context, featureDisableInDemoVersionKey),
-        backgroundColor: Theme.of(context).colorScheme.error);
+  static String formatAssignmentDueDate(
+      DateTime dateTime, BuildContext context) {
+    final monthName = UiUtils.getMonthName(dateTime.month);
+    final hour = dateTime.hour < 13 ? dateTime.hour : dateTime.hour - 12;
+    final amOrPm = hour > 12 ? "PM" : "AM";
+    return "${UiUtils.getTranslatedLabel(context, dueKey)}, ${dateTime.day} $monthName ${dateTime.year}, ${hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $amOrPm";
   }
 
-  static bool isDemoVersionEnable() {
-    //If isDemoVersion is not declarer then it return always false
-    return true;
+  static Future<void> showCustomSnackBar(
+      {required BuildContext context,
+      required String errorMessage,
+      required Color backgroundColor,
+      Duration delayDuration = errorMessageDisplayDuration}) async {
+    OverlayState? overlayState = Overlay.of(context);
+    OverlayEntry overlayEntry = OverlayEntry(
+      builder: (context) => ErrorMessageOverlayContainer(
+        backgroundColor: backgroundColor,
+        errorMessage: errorMessage,
+      ),
+    );
+
+    overlayState?.insert(overlayEntry);
+    await Future.delayed(delayDuration);
+    overlayEntry.remove();
   }
 
-  static int getStudyMaterialId(
-      String studyMaterialLabel, BuildContext context) {
-    if (studyMaterialLabel == getTranslatedLabel(context, fileUploadKey)) {
-      return 1;
-    }
-    if (studyMaterialLabel == getTranslatedLabel(context, youtubeLinkKey)) {
-      return 2;
-    }
-    if (studyMaterialLabel == getTranslatedLabel(context, videoUploadKey)) {
-      return 3;
-    }
-    return 0;
+  static Color getColorFromHexValue(String hexValue) {
+    int color = int.parse(hexValue.replaceAll("#", "0xff").toString());
+    return Color(color);
   }
 
-  static int getStudyMaterialIdByEnum(
-      StudyMaterialType studyMaterialType, BuildContext context) {
-    if (studyMaterialType == StudyMaterialType.file) {
-      return 1;
+  static String getErrorMessageFromErrorCode(
+      BuildContext context, String errorCode) {
+    return UiUtils.getTranslatedLabel(
+        context, ErrorMessageKeysAndCode.getErrorMessageKeyFromCode(errorCode));
+  }
+
+  //0 = Pending/In Review , 1 = Accepted , 2 = Rejected
+  static String getAssignmentSubmissionStatusKey(int status) {
+    if (status == 0) {
+      return inReviewKey;
     }
-    if (studyMaterialType == StudyMaterialType.youtubeVideo) {
-      return 2;
+    if (status == 1) {
+      return acceptedKey;
     }
-    if (studyMaterialType == StudyMaterialType.uploadedVideoUrl) {
-      return 3;
+    if (status == 2) {
+      return rejectedKey;
     }
-    return 0;
+    if (status == 3) {
+      return resubmittedKey;
+    }
+    return "";
   }
 
   static String getBackButtonPath(BuildContext context) {
@@ -226,49 +255,13 @@ class UiUtils {
         : getImagePath("back_icon.svg");
   }
 
-  static String getStudyMaterialTypeLabelByEnum(
-      StudyMaterialType studyMaterialType, BuildContext context) {
-    if (studyMaterialType == StudyMaterialType.file) {
-      return UiUtils.getTranslatedLabel(context, fileUploadKey);
-    }
-    if (studyMaterialType == StudyMaterialType.youtubeVideo) {
-      return UiUtils.getTranslatedLabel(context, youtubeLinkKey);
-    }
-    if (studyMaterialType == StudyMaterialType.uploadedVideoUrl) {
-      return UiUtils.getTranslatedLabel(context, videoUploadKey);
-    }
-
-    return "Other";
-  }
-
-  static void openFileInBrowser(String fileUrl, BuildContext context) async {
-    try {
-      final canLaunch = await canLaunchUrl(Uri.parse(fileUrl));
-      if (canLaunch) {
-        launchUrl(Uri.parse(fileUrl), mode: LaunchMode.externalApplication);
-      } else {
-        UiUtils.showBottomToastOverlay(
-            context: context,
-            errorMessage:
-                UiUtils.getTranslatedLabel(context, unableToOpenFileKey),
-            backgroundColor: Theme.of(context).colorScheme.error);
-      }
-    } catch (e) {
-      UiUtils.showBottomToastOverlay(
-          context: context,
-          errorMessage:
-              UiUtils.getTranslatedLabel(context, unableToOpenFileKey),
-          backgroundColor: Theme.of(context).colorScheme.error);
-    }
-  }
-
   static void openDownloadBottomsheet(
       {required BuildContext context,
       required bool storeInExternalStorage,
       required StudyMaterial studyMaterial}) {
     showBottomSheet(
             child: BlocProvider<DownloadFileCubit>(
-              create: (context) => DownloadFileCubit(StudyMaterialRepository()),
+              create: (context) => DownloadFileCubit(SubjectRepository()),
               child: DownloadFileBottomsheetContainer(
                 storeInExternalStorage: storeInExternalStorage,
                 studyMaterial: studyMaterial,
@@ -278,7 +271,7 @@ class UiUtils {
         .then((result) {
       if (result != null) {
         if (result['error']) {
-          showBottomToastOverlay(
+          showCustomSnackBar(
               context: context,
               errorMessage: getErrorMessageFromErrorCode(
                   context, result['message'].toString()),
@@ -287,7 +280,7 @@ class UiUtils {
           try {
             OpenFilex.open(result['filePath'].toString());
           } catch (e) {
-            showBottomToastOverlay(
+            showCustomSnackBar(
                 context: context,
                 errorMessage: getTranslatedLabel(
                     context,
@@ -299,6 +292,47 @@ class UiUtils {
         }
       }
     });
+  }
+
+  static String formatDate(DateTime dateTime) {
+    return "${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}";
+  }
+
+  static String dateConverter(
+      DateTime myEndDate, BuildContext contxt, bool fromResult) {
+    String date;
+    //format date & time
+    final onlyDate = myEndDate.toString().split(" ");
+    DateTime dt = intl.DateFormat("yyyy-MM-dd", "en_US").parse(onlyDate[0]);
+    final formattedDate = new intl.DateFormat('dd MMM, yyyy');
+    final onlyTime = onlyDate[1];
+    final formattedTime = UiUtils.formatTime(onlyTime);
+    //check for today or tomorrow or specific date
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final checkEndDate =
+        DateTime(myEndDate.year, myEndDate.month, myEndDate.day);
+
+    if (checkEndDate == today) {
+      date = (fromResult)
+          ? "${UiUtils.getTranslatedLabel(contxt, submittedKey)} : $todayKey"
+          : "$todayKey, $formattedTime";
+    } else if (checkEndDate == tomorrow) {
+      date = (fromResult)
+          ? "${UiUtils.getTranslatedLabel(contxt, submittedKey)} : $tomorrowKey"
+          : "$tomorrowKey, $formattedTime";
+    } else {
+      date = (fromResult)
+          ? '${UiUtils.getTranslatedLabel(contxt, submittedKey)} : ${formattedDate.format(dt)}'
+          : '${formattedDate.format(dt)} $formattedTime';
+    }
+    return date;
+  }
+
+  //It will return - if given value is empty
+  static String formatEmptyValue(String value) {
+    return value.isEmpty ? "-" : value;
   }
 
   static Future<bool> forceUpdate(String updatedVersion) async {
@@ -342,52 +376,42 @@ class UiUtils {
     return false;
   }
 
-  static final List<String> weekDays = [
-    "Mon",
-    "Tue",
-    "Wed",
-    "Thu",
-    "Fri",
-    "Sat",
-    "Sun"
-  ];
-
-  static String formatTime(String time) {
-    final hourMinuteSecond = time.split(":");
-    final hour = int.parse(hourMinuteSecond.first) < 13
-        ? int.parse(hourMinuteSecond.first)
-        : int.parse(hourMinuteSecond.first) - 12;
-    final amOrPm = int.parse(hourMinuteSecond.first) > 12 ? "PM" : "AM";
-    return "${hour.toString().padLeft(2, '0')}:${hourMinuteSecond[1]} $amOrPm";
-  }
-
   static bool _shouldUpdateBasedOnBuildNumber(
       String currentBuildNumber, String updatedBuildNumber) {
     return int.parse(updatedBuildNumber) > int.parse(currentBuildNumber);
   }
 
-  //Date format is DD-MM-YYYY
-  static String formatStringDate(String date) {
-    final DateTime dateTime = DateTime.parse(date);
-    return "${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}";
+  static void showFeatureDisableInDemoVersion(BuildContext context) {
+    showCustomSnackBar(
+        context: context,
+        errorMessage:
+            UiUtils.getTranslatedLabel(context, featureDisableInDemoVersionKey),
+        backgroundColor: Theme.of(context).colorScheme.error);
   }
 
-  static String formatDate(DateTime dateTime) {
-    return "${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}";
+  static bool isDemoVersionEnable() {
+    //If isDemoVersion is not declarer then it return always false
+    return true;
   }
 
-  static bool isToadyIsInAcademicYear(DateTime firstDate, DateTime lastDate) {
-    final currentDate = DateTime.now();
-
-    return (currentDate.isAfter(firstDate) && currentDate.isBefore(lastDate)) ||
-        isSameDay(firstDate) ||
-        isSameDay(lastDate);
+  //0 = Pending , 1 = Paid ˆset according to API response.
+  static String getStudentFeesStatusKey(int status) {
+    if (status == 0) {
+      return pendingKey;
+    }
+    if (status == 1) {
+      return paidKey;
+    }
+    return "";
   }
 
-  static bool isSameDay(DateTime dateTime) {
-    final currentDate = DateTime.now();
-    return (currentDate.day == dateTime.day) &&
-        (currentDate.month == dateTime.month) &&
-        (currentDate.year == dateTime.year);
+  static String formatAmount(
+      {required String strVal, required BuildContext context}) {
+    return "$strVal ${context.read<AppConfigurationCubit>().getFeesSettings().currencySymbol}";
   }
+}
+
+extension emptyPadding on num {
+  SizedBox get sizedBoxHeight => SizedBox(height: toDouble());
+  SizedBox get sizedBoxWidth => SizedBox(width: toDouble());
 }

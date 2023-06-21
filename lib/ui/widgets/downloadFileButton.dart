@@ -1,7 +1,8 @@
+import 'package:eschool/data/models/studyMaterial.dart';
+
+import 'package:eschool/utils/uiUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:eschool_teacher/data/models/studyMaterial.dart';
-import 'package:eschool_teacher/utils/uiUtils.dart';
 
 class DownloadFileButton extends StatelessWidget {
   final StudyMaterial studyMaterial;

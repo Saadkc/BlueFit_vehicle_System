@@ -1,89 +1,113 @@
-import 'package:eschool_teacher/ui/screens/aboutUsScreen.dart';
-import 'package:eschool_teacher/ui/screens/add&editAssignmentScreen.dart';
-import 'package:eschool_teacher/ui/screens/addOrEditAnnouncementScreen.dart';
-import 'package:eschool_teacher/ui/screens/addOrEditLessonScreen.dart';
-import 'package:eschool_teacher/ui/screens/addOrEditTopicScreen.dart';
-import 'package:eschool_teacher/ui/screens/result/addResultOfStudentScreen.dart';
-import 'package:eschool_teacher/ui/screens/announcementsScreen.dart';
-
-import 'package:eschool_teacher/ui/screens/assignment/assignmentScreen.dart';
-import 'package:eschool_teacher/ui/screens/assignments/assignmentsScreen.dart';
-import 'package:eschool_teacher/ui/screens/attendanceScreen.dart';
-import 'package:eschool_teacher/ui/screens/class/classScreen.dart';
-import 'package:eschool_teacher/ui/screens/contactUsScreen.dart';
-import 'package:eschool_teacher/ui/screens/exam/examScreen.dart';
-import 'package:eschool_teacher/ui/screens/exam/examTimeTableScreen.dart';
-import 'package:eschool_teacher/ui/screens/holidays/holidaysScreen.dart';
-import 'package:eschool_teacher/ui/screens/home/homeScreen.dart';
-import 'package:eschool_teacher/ui/screens/lessonsScreen.dart';
-import 'package:eschool_teacher/ui/screens/login/loginScreen.dart';
-import 'package:eschool_teacher/ui/screens/privacyPolicyScreen.dart';
-import 'package:eschool_teacher/ui/screens/result/addResultForAllStudentsScreen.dart';
-
-import 'package:eschool_teacher/ui/screens/searchStudentScreen.dart';
-import 'package:eschool_teacher/ui/screens/splashScreen.dart';
-import 'package:eschool_teacher/ui/screens/studentDetails/studentDetailsScreen.dart';
-import 'package:eschool_teacher/ui/screens/subjectScreen.dart';
-import 'package:eschool_teacher/ui/screens/termsAndConditionScreen.dart';
-import 'package:eschool_teacher/ui/screens/topcisByLessonScreen.dart';
-import 'package:eschool_teacher/ui/screens/topicsScreen.dart';
+import 'package:eschool/ui/screens/aboutUsScreen.dart';
+import 'package:eschool/ui/screens/assignment/assignmentScreen.dart';
+import 'package:eschool/ui/screens/auth/authScreen.dart';
+import 'package:eschool/ui/screens/auth/parentLoginScreen.dart';
+import 'package:eschool/ui/screens/auth/studentLoginScreen.dart';
+import 'package:eschool/ui/screens/chapterDetails/chapterDetailsScreen.dart';
+import 'package:eschool/ui/screens/childAssignmentsScreen.dart';
+import 'package:eschool/ui/screens/childAttendanceScreen.dart';
+import 'package:eschool/ui/screens/childDetailMenuScreen.dart';
+import 'package:eschool/ui/screens/childResultsScreen.dart';
+import 'package:eschool/ui/screens/childTeachers.dart';
+import 'package:eschool/ui/screens/childTimeTableScreen.dart';
+import 'package:eschool/ui/screens/contactUsScreen.dart';
+import 'package:eschool/ui/screens/exam/examTimeTableScreen.dart';
+import 'package:eschool/ui/screens/exam/onlineExam/examOnlineScreen.dart';
+import 'package:eschool/ui/screens/examScreen.dart';
+import 'package:eschool/ui/screens/faqsScreen.dart';
+import 'package:eschool/ui/screens/fees/feesDetailsScreen.dart';
+import 'package:eschool/ui/screens/fees/feesPaymentVerification.dart';
+import 'package:eschool/ui/screens/fees/feesStatusScreen.dart';
+import 'package:eschool/ui/screens/holidaysScreen.dart';
+import 'package:eschool/ui/screens/home/homeScreen.dart';
+import 'package:eschool/ui/screens/noticeBoardScreen.dart';
+import 'package:eschool/ui/screens/parentHomeScreen.dart';
+import 'package:eschool/ui/screens/parentProfileScreen.dart';
+import 'package:eschool/ui/screens/playVideo/playVideoScreen.dart';
+import 'package:eschool/ui/screens/reports/reportSubjectsContainer.dart';
+import 'package:eschool/ui/screens/reports/subjectWiseDetailedReport.dart';
+import 'package:eschool/ui/screens/resultOnline/resultOnlineScreen.dart';
+import 'package:eschool/ui/screens/studentProfileScreen.dart';
+import 'package:eschool/ui/screens/resultScreen.dart';
+import 'package:eschool/ui/screens/selectSubjectsScreen.dart';
+import 'package:eschool/ui/screens/settingsScreen.dart';
+import 'package:eschool/ui/screens/splashScreen.dart';
+import 'package:eschool/ui/screens/childDetailsScreen.dart';
+import 'package:eschool/ui/screens/subjectDetails/subjectDetailsScreen.dart';
+import 'package:eschool/ui/screens/privacyPolicyScreen.dart';
+import 'package:eschool/ui/screens/termsAndConditionScreen.dart';
+import 'package:eschool/ui/screens/topicDetailsScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../ui/screens/result/resultScreen.dart';
 
 class Routes {
   static const String splash = "splash";
   static const String home = "/";
-  static const String login = "login";
-  static const String classScreen = "/class";
-  static const String subject = "/subject";
 
-  static const String assignments = "/assignments";
-
-  static const String announcements = "/announcements";
-
-  static const String topics = "/topics";
-
+  static const String auth = "auth";
+  static const String parentLogin = "parentLogin";
+  static const String studentLogin = "studentLogin";
+  static const String studentProfile = "/studentProfile";
   static const String assignment = "/assignment";
 
-  static const String addAssignment = "/addAssignment";
+  static const String exam = "/exam";
 
-  static const String attendance = "/attendance";
+  static const String examTimeTable = "/examTimeTable";
 
-  static const String searchStudent = "/searchStudent";
+  static const String subjectDetails = "/subjectDetails";
 
-  static const String studentDetails = "/studentDetails";
-
-
-  static const String resultList = "/resultList";
-
-  static const String addResult = "/addResult";
-  static const String addResultForAllStudents = "/addResultForAllStudents";
-
-  static const String lessons = "/lessons";
-
-  static const String addOrEditLesson = "/addOrEditLesson";
-
-  static const String addOrEditTopic = "/addOrEditTopic";
-
-  static const String addOrEditAnnouncement = "/addOrEditAnnouncement";
-
-  static const String monthWiseAttendance = "/monthWiseAttendance";
-
-  static const String termsAndCondition = "/termsAndCondition";
+  static const String chapterDetails = "/chapterDetails";
 
   static const String aboutUs = "/aboutUs";
   static const String privacyPolicy = "/privacyPolicy";
 
   static const String contactUs = "/contactUs";
+  static const String faqs = "/faqs";
 
-  static const String topicsByLesson = "/topicsByLesson";
+  static const String termsAndCondition = "/termsAndCondition";
+
+  static const String selectSubjects = "/selectSubjects";
+  static const String result = "/result";
+  static const String parentHome = "parent/";
+
+  static const String studentDetails = "parent/studentDetails";
+
+  static const String parentMenu = "parent/studentDetailsMenu";
+
+  static const String topicDetails = "/topicDetails";
+
+  static const String playVideo = "/playVideo";
+
+  static const String childAssignments = "/childAssignments";
+
+  static const String childAttendance = "/childAttendance";
+
+  static const String childTimeTable = "/childTimeTable";
+
+  static const String childResults = "/childResults";
+
+  static const String childTeachers = "/childTeachers";
+
+  static const String settings = "/settings";
+
+  static const String parentProfile = "/parentProfile";
+
+  static const String noticeBoard = "/noticeBoard";
 
   static const String holidays = "/holidays";
 
-  static const String exams = "/exam";
-  static const String examTimeTable = "/examTimeTable";
+  static const String childFees = "/fees";
+
+  static const String feesDetails = "/feesDetails";
+
+  static const String paymentVerify = "/paymentVerify";
+
+  static const String subjectWiseReport = "/reportSubjectsContainer";
+  static const String subjectWiseDetailedReport = "/subjectWiseDetailedReport";
+
+  static const String examOnline = "/examOnline";
+
+  static const String resultOnline = "/resultOnline";
 
   static String currentRoute = splash;
 
@@ -92,81 +116,55 @@ class Routes {
     switch (routeSettings.name) {
       case splash:
         {
-          return CupertinoPageRoute(builder: (_) => SplashScreen());
+          return CupertinoPageRoute(
+              builder: (_) => SplashScreen()); //Splash screen
         }
-      case login:
+      case auth:
         {
-          return LoginScreen.route(routeSettings);
+          return CupertinoPageRoute(builder: (_) => AuthScreen());
         }
+      case studentLogin:
+        {
+          return StudentLoginScreen.route(routeSettings);
+        }
+
+      case parentLogin:
+        {
+          return ParentLoginScreen.route(routeSettings);
+        }
+
       case home:
         {
           return HomeScreen.route(routeSettings);
         }
-      case classScreen:
+      case parentHome:
         {
-          return ClassScreen.route(routeSettings);
-        }
-      case subject:
-        {
-          return SubjectScreen.route(routeSettings);
-        }
-      case assignments:
-        {
-          return AssignmentsScreen.route(routeSettings);
+          return ParentHomeScreen.route(routeSettings);
         }
       case assignment:
         {
           return AssignmentScreen.route(routeSettings);
         }
-      case addAssignment:
+      case exam:
         {
-          return AddAssignmentScreen.Routes(routeSettings);
+          return ExamScreen.route(routeSettings);
+        }
+      case examTimeTable:
+        {
+          return ExamTimeTableScreen.route(routeSettings);
+        }
+      case subjectDetails:
+        {
+          return SubjectDetailsScreen.route(routeSettings);
+        }
+      case chapterDetails:
+        {
+          return ChapterDetailsScreen.route(routeSettings);
         }
 
-      case attendance:
+      case studentProfile:
         {
-          return AttendanceScreen.route(routeSettings);
-        }
-      case searchStudent:
-        {
-          return SearchStudentScreen.route(routeSettings);
-        }
-      case studentDetails:
-        {
-          return StudentDetailsScreen.route(routeSettings);
-        }
-      case resultList:
-        {
-          return ResultListScreen.route(routeSettings);
-        }
-      case addResult:
-        {
-          return AddResultScreen.route(routeSettings);
-        }
-        case addResultForAllStudents:
-        {
-          return AddResultForAllStudents.route(routeSettings);
-        }
-
-      case announcements:
-        {
-          return AnnouncementsScreen.route(routeSettings);
-        }
-      case lessons:
-        {
-          return LessonsScreen.route(routeSettings);
-        }
-      case topics:
-        {
-          return TopicsScreen.route(routeSettings);
-        }
-      case addOrEditLesson:
-        {
-          return AddOrEditLessonScreen.route(routeSettings);
-        }
-      case addOrEditTopic:
-        {
-          return AddOrEditTopicScreen.route(routeSettings);
+          return StudentProfileScreen.route(routeSettings);
         }
       case aboutUs:
         {
@@ -175,6 +173,66 @@ class Routes {
       case privacyPolicy:
         {
           return PrivacyPolicyScreen.route(routeSettings);
+        }
+      case faqs:
+        {
+          return CupertinoPageRoute(builder: (_) => FaqsScreen());
+        }
+      case result:
+        {
+          return ResultScreen.route(routeSettings);
+        }
+      case selectSubjects:
+        {
+          return SelectSubjectsScreen.route(routeSettings);
+        }
+      case studentDetails:
+        {
+          return ChildDetailsScreen.route(routeSettings);
+        }
+      case topicDetails:
+        {
+          return TopicDetailsScreen.route(routeSettings);
+        }
+      case playVideo:
+        {
+          return PlayVideoScreen.route(routeSettings);
+        }
+      case childAssignments:
+        {
+          return ChildAssignmentsScreen.route(routeSettings);
+        }
+      case childAttendance:
+        {
+          return ChildAttendanceScreen.route(routeSettings);
+        }
+
+      case childTimeTable:
+        {
+          return ChildTimeTableScreen.route(routeSettings);
+        }
+
+      case childResults:
+        {
+          return ChildResultsScreen.route(routeSettings);
+        }
+
+      case childTeachers:
+        {
+          return ChildTeachersScreen.route(routeSettings);
+        }
+      case settings:
+        {
+          return CupertinoPageRoute(builder: (_) => SettingsScreen());
+        }
+      case parentProfile:
+        {
+          return CupertinoPageRoute(builder: (_) => ParentProfileScreen());
+        }
+
+      case noticeBoard:
+        {
+          return NoticeBoardScreen.route(routeSettings);
         }
 
       case contactUs:
@@ -185,28 +243,40 @@ class Routes {
         {
           return TermsAndConditionScreen.route(routeSettings);
         }
-      case addOrEditAnnouncement:
-        {
-          return AddOrEditAnnouncementScreen.route(routeSettings);
-        }
-      case topicsByLesson:
-        {
-          return TopcisByLessonScreen.route(routeSettings);
-        }
       case holidays:
         {
           return HolidaysScreen.route(routeSettings);
         }
-      case exams:
+      case childFees:
         {
-          return ExamScreen.route(routeSettings);
+          return FeesStatusScreen.route(routeSettings);
+        }
+      case feesDetails:
+        {
+          return FeesDetailsScreen.route(routeSettings);
         }
 
-        case examTimeTable:
+      case paymentVerify:
+        return FeesPaymentVerification.route(routeSettings);
+
+      case subjectWiseReport:
+        return ReportSubjectsContainer.route(routeSettings);
+
+      case subjectWiseDetailedReport:
+        return SubjectWiseDetailedReport.route(routeSettings);
+
+      case examOnline:
+        return ExamOnlineScreen.route(routeSettings);
+
+      case resultOnline:
         {
-          return ExamTimeTableScreen.route(routeSettings);
+          return ResultOnlineScreen.route(routeSettings);
         }
 
+      case parentMenu:
+        {
+          return ChildDetailMenuScreen.route(routeSettings);
+        }
       default:
         {
           return CupertinoPageRoute(builder: (context) => const Scaffold());

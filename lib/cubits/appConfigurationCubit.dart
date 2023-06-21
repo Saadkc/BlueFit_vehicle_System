@@ -1,25 +1,38 @@
 import 'dart:io';
 
-import 'package:eschool_teacher/data/models/appConfiguration.dart';
-import 'package:eschool_teacher/data/repositories/systemInfoRepository.dart';
+import 'package:equatable/equatable.dart';
+import 'package:eschool/data/models/appConfiguration.dart';
+import 'package:eschool/data/models/feesSettings.dart';
+import 'package:eschool/data/repositories/systemInfoRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class AppConfigurationState {}
+abstract class AppConfigurationState extends Equatable {}
 
-class AppConfigurationInitial extends AppConfigurationState {}
+class AppConfigurationInitial extends AppConfigurationState {
+  @override
+  List<Object?> get props => [];
+}
 
-class AppConfigurationFetchInProgress extends AppConfigurationState {}
+class AppConfigurationFetchInProgress extends AppConfigurationState {
+  @override
+  List<Object?> get props => [];
+}
 
 class AppConfigurationFetchSuccess extends AppConfigurationState {
   final AppConfiguration appConfiguration;
 
   AppConfigurationFetchSuccess({required this.appConfiguration});
+  @override
+  List<Object?> get props => [appConfiguration];
 }
 
 class AppConfigurationFetchFailure extends AppConfigurationState {
   final String errorMessage;
 
   AppConfigurationFetchFailure(this.errorMessage);
+
+  @override
+  List<Object?> get props => [errorMessage];
 }
 
 class AppConfigurationCubit extends Cubit<AppConfigurationState> {
@@ -33,6 +46,7 @@ class AppConfigurationCubit extends Cubit<AppConfigurationState> {
     try {
       final appConfiguration = AppConfiguration.fromJson(
           await _systemRepository.fetchSettings(type: "app_settings") ?? {});
+      print("app config - $appConfiguration");
       emit(AppConfigurationFetchSuccess(appConfiguration: appConfiguration));
     } catch (e) {
       emit(AppConfigurationFetchFailure(e.toString()));
@@ -76,5 +90,28 @@ class AppConfigurationCubit extends Cubit<AppConfigurationState> {
       return getAppConfiguration().forceAppUpdate == "1";
     }
     return false;
+  }
+
+  FeesSettings getFeesSettings() {
+    if (state is AppConfigurationFetchSuccess) {
+      return getAppConfiguration().feesSettings;
+    }
+    return FeesSettings.fromJson(Map.from({}));
+  }
+
+  bool getOnlineFeesPaymentStatus() {
+    if (state is AppConfigurationFetchSuccess) {
+      bool isEnabled = getAppConfiguration().isOnlineFeesPaymentEnabled == "1";
+      return isEnabled;
+    }
+    return false;
+    // isOnlineFeesPaymentEnabled
+  }
+
+  String fetchExamRules() {
+    if (state is AppConfigurationFetchSuccess) {
+      return getAppConfiguration().onlineExamRules;
+    }
+    return '';
   }
 }
